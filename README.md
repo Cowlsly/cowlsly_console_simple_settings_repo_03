@@ -1,2 +1,18 @@
 # cowlsly_console_simple_settings_repo_03
-This is a simple settings UI and app, it can be applied to all of our apps and our website Cowlsly.com, these settings will give any user basic control over things like volume and colour tint over its own panels; it will also act as an identified for the cowlsly authenticator. console, but that is ab
+
+Cowlsly Simple Settings is the shared settings module for the Cowlsly Console suite.
+
+## Current status
+
+Planning / quick-win build.
+
+## Phase 1 intent
+
+- Shared app settings module.
+- CASMEA information entry screen.
+- Controlled developer shortcut after access is granted.
+
+## Documents
+
+- `ROADMAP.md` — active build roadmap for this repo.
+- `dev/dat/doc/ROADMAP.ORIGINAL.md` — founding context and rebuild notes.

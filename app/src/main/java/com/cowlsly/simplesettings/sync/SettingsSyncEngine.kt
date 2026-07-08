@@ -167,7 +167,7 @@ class SettingsSyncEngine(
                 val pct = raw.toIntOrNull()?.let { (it * 100 / 255) } ?: 0
                 "$pct% brightness"
             }
-            Settings.Secure.LOCATION_MODE -> when (raw) {
+            "location_mode" -> when (raw) {
                 "0" -> "Off"
                 "1" -> "Device only"
                 "2" -> "Battery saving"

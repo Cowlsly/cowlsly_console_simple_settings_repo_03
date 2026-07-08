@@ -52,6 +52,8 @@ class SettingsViewModel(private val repository: SettingsRepository) : ViewModel(
     private val _pendingPermission = MutableStateFlow<PermissionInstruction?>(null)
     private val _pinUnlockedIds = MutableStateFlow<Set<String>>(emptySet())
     private val _lockRequired = MutableStateFlow(false)
+    /** One successful PIN this session unlocks the whole developer zone. */
+    private val _developerSessionUnlocked = MutableStateFlow(false)
     private var searchJob: Job? = null
 
     private val sortedEntries = combine(
@@ -157,7 +159,12 @@ class SettingsViewModel(private val repository: SettingsRepository) : ViewModel(
             val prefs = repository.preferences.first()
             if (prefs.lockOnBackground && prefs.developerPinSet) {
                 _pinUnlockedIds.value = emptySet()
+                _developerSessionUnlocked.value = false
                 _lockRequired.value = true
+                // Ensure the lock dialog can accept a PIN even with no panel entry.
+                _pinDialogEntry.value = null
+                _pinInput.value = ""
+                _pinError.value = false
             }
         }
     }
@@ -171,8 +178,15 @@ class SettingsViewModel(private val repository: SettingsRepository) : ViewModel(
     }
 
     fun isEntryUnlocked(entry: SettingsEntry): Boolean {
-        val needsPin = entry.requiresPin || entry.requiresDeveloperAccess
-        return !needsPin || entry.id in uiState.value.pinUnlockedIds || entry.panelType == com.cowlsly.simplesettings.data.SettingsPanelType.ABOUT
+        if (entry.panelType == com.cowlsly.simplesettings.data.SettingsPanelType.ABOUT) return true
+        if (entry.requiresDeveloperAccess && _developerSessionUnlocked.value) {
+            // Developer zone already unlocked this session; CASMEA still needs its own PIN.
+            return !entry.requiresPin || entry.id in uiState.value.pinUnlockedIds
+        }
+        if (entry.requiresPin || entry.requiresDeveloperAccess) {
+            return entry.id in uiState.value.pinUnlockedIds
+        }
+        return true
     }
 
     fun requestPinFor(entry: SettingsEntry) {
@@ -251,7 +265,7 @@ class SettingsViewModel(private val repository: SettingsRepository) : ViewModel(
     /** Explicit open action — records usage and may request PIN for protected rows. */
     fun onEntryOpened(entry: SettingsEntry) {
         recordPanelView(entry)
-        if (entry.requiresPin && entry.id !in _pinUnlockedIds.value) {
+        if (!isEntryUnlocked(entry)) {
             requestPinFor(entry)
         }
     }
@@ -262,6 +276,8 @@ class SettingsViewModel(private val repository: SettingsRepository) : ViewModel(
     }
 
     fun dismissPinDialog() {
+        // Never dismiss the forced app-lock dialog via cancel.
+        if (_lockRequired.value) return
         _pinDialogEntry.value = null
         _pinInput.value = ""
         _pinError.value = false
@@ -269,20 +285,28 @@ class SettingsViewModel(private val repository: SettingsRepository) : ViewModel(
 
     fun submitPin(onUnlocked: (SettingsEntry) -> Unit) {
         viewModelScope.launch {
-            val entry = _pinDialogEntry.value ?: return@launch
-            if (uiState.value.lockRequired) {
+            // App lock can show with no panel entry — check PIN first so unlock always works.
+            if (_lockRequired.value) {
                 val ok = repository.checkPin(_pinInput.value)
                 if (ok) {
-                    dismissPinDialog()
+                    _pinDialogEntry.value = null
+                    _pinInput.value = ""
+                    _pinError.value = false
                     clearLockAfterPin()
                 } else {
                     _pinError.value = true
                 }
                 return@launch
             }
+            val entry = _pinDialogEntry.value ?: return@launch
             val ok = repository.checkPin(_pinInput.value)
             if (ok) {
                 _pinUnlockedIds.value = _pinUnlockedIds.value + entry.id
+                if (entry.requiresDeveloperAccess ||
+                    entry.panelType == com.cowlsly.simplesettings.data.SettingsPanelType.DEVELOPER_GATE
+                ) {
+                    _developerSessionUnlocked.value = true
+                }
                 dismissPinDialog()
                 onUnlocked(entry)
             } else {

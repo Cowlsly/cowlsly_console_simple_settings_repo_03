@@ -29,8 +29,8 @@ import com.cowlsly.simplesettings.ui.theme.CowlslyWarning
 @Composable
 fun SettingsPanelHeader(
     entry: SettingsEntry,
-    rankHint: SettingsRankHint = SettingsRankHint.NORMAL,
     modifier: Modifier = Modifier,
+    rankHint: SettingsRankHint = SettingsRankHint.NORMAL,
 ) {
     Row(
         modifier = modifier,

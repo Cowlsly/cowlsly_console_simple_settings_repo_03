@@ -21,7 +21,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Storage
 import androidx.compose.material.icons.filled.Terminal
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material.icons.filled.VolumeUp
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.material.icons.filled.Accessibility
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -29,8 +29,8 @@ import com.cowlsly.simplesettings.ui.theme.CowlslyCyan
 import com.cowlsly.simplesettings.ui.theme.CowlslyGoldLight
 
 fun settingsIconFor(key: String?): ImageVector = when (key) {
-    "volume" -> Icons.Default.VolumeUp
-    "sound" -> Icons.Default.VolumeUp
+    "volume" -> Icons.AutoMirrored.Filled.VolumeUp
+    "sound" -> Icons.AutoMirrored.Filled.VolumeUp
     "display" -> Icons.Default.PhoneAndroid
     "spotify" -> Icons.Default.MusicNote
     "security" -> Icons.Default.Lock

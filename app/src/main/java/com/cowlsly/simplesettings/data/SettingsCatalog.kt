@@ -1,3 +1,5 @@
+@file:Suppress("InlinedApi")
+
 package com.cowlsly.simplesettings.data
 
 import android.provider.Settings
@@ -10,6 +12,9 @@ import android.provider.Settings
  * Every [SettingsPanelType.SYSTEM_INTENT] row is clickable via
  * [SystemIntentLauncher] (action → component → fallbacks → parent screen).
  * Developer rows require access; non-developer entries are always available.
+ *
+ * High-API [Settings] action constants are intentional: [SystemIntentLauncher]
+ * falls back when a device does not resolve them (minSdk 26).
  */
 object SettingsCatalog {
     const val PAGE_SIZE = 6
@@ -76,8 +81,33 @@ object SettingsCatalog {
 
         // ── P3: Security ────────────────────────────────────────────────────
         add(intent("security", "Security", "Tap → Screen lock, biometrics, encryption", 3, Settings.ACTION_SECURITY_SETTINGS, "pin", "password", "fingerprint", "lock", icon = "security"))
-        add(intent("biometric", "Biometric enroll", "Tap → Fingerprint & face setup", 3, Settings.ACTION_BIOMETRIC_ENROLL, "fingerprint", "face", icon = "security", fallbacks = listOf(Settings.ACTION_FINGERPRINT_ENROLL, Settings.ACTION_SECURITY_SETTINGS)))
-        add(intent("fingerprint", "Fingerprint enroll", "Tap → Fingerprint only", 3, Settings.ACTION_FINGERPRINT_ENROLL, "fingerprint", "touch", icon = "security", fallbacks = listOf(Settings.ACTION_BIOMETRIC_ENROLL, Settings.ACTION_SECURITY_SETTINGS)))
+        add(
+            intent(
+                "biometric",
+                "Biometric enroll",
+                "Tap → Fingerprint & face setup",
+                3,
+                Settings.ACTION_BIOMETRIC_ENROLL,
+                "fingerprint", "face",
+                icon = "security",
+                fallbacks = listOf(
+                    "android.settings.FINGERPRINT_ENROLL",
+                    Settings.ACTION_SECURITY_SETTINGS,
+                ),
+            ),
+        )
+        add(
+            intent(
+                "fingerprint",
+                "Fingerprint enroll",
+                "Tap → Fingerprint only",
+                3,
+                "android.settings.FINGERPRINT_ENROLL",
+                "fingerprint", "touch",
+                icon = "security",
+                fallbacks = listOf(Settings.ACTION_BIOMETRIC_ENROLL, Settings.ACTION_SECURITY_SETTINGS),
+            ),
+        )
         add(intent("trust_agents", "Trust agents", "Tap → Smart Lock trusted devices", 3, "android.settings.TRUST_AGENT_SETTINGS", "smart lock", icon = "security", fallbacks = listOf(Settings.ACTION_SECURITY_SETTINGS)))
         add(intent("screen_lock", "Screen lock settings", "Tap → Lock screen timeout & options", 3, "android.settings.SCREEN_LOCK_SETTINGS", "lock screen", "timeout", icon = "security", fallbacks = listOf(Settings.ACTION_SECURITY_SETTINGS)))
         add(intent("credential_provider", "Credential provider", "Tap → Passkeys & password managers", 3, Settings.ACTION_CREDENTIAL_PROVIDER, "passkey", "password", "autofill", icon = "security", fallbacks = listOf(Settings.ACTION_SECURITY_SETTINGS)))
@@ -172,20 +202,29 @@ object SettingsCatalog {
         // ── P7: Device ──────────────────────────────────────────────────────
         add(intent("storage", "Storage", "Tap → Free space & app storage", 7, Settings.ACTION_INTERNAL_STORAGE_SETTINGS, "disk", "space", icon = "device"))
         add(intent("memory_card", "Storage volumes", "Tap → SD card & external storage", 7, Settings.ACTION_MEMORY_CARD_SETTINGS, "sd", "external", icon = "device", fallbacks = listOf(Settings.ACTION_INTERNAL_STORAGE_SETTINGS)))
-        add(intent("storage_volume_access", "Storage volume access", "Tap → Apps with volume access", 7, Settings.ACTION_STORAGE_VOLUME_ACCESS_SETTINGS, "storage", "volume", icon = "device", fallbacks = listOf(Settings.ACTION_INTERNAL_STORAGE_SETTINGS)))
+        add(
+            intent(
+                "storage_volume_access",
+                "Storage volume access",
+                "Tap → Apps with volume access",
+                7,
+                "android.settings.STORAGE_VOLUME_ACCESS_SETTINGS",
+                "storage", "volume",
+                icon = "device",
+                fallbacks = listOf(Settings.ACTION_INTERNAL_STORAGE_SETTINGS),
+            ),
+        )
         add(intent("battery", "Battery saver", "Tap → Battery saver mode", 7, Settings.ACTION_BATTERY_SAVER_SETTINGS, "power", "charge", "saver", icon = "battery"))
         add(intent("battery_usage", "Battery optimization", "Tap → Per-app battery restrictions", 7, Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS, "drain", "doze", icon = "battery"))
         add(
             intent(
                 id = "ignore_battery_this_app",
-                title = "Unrestricted battery (this app)",
-                subtitle = "Tap → Request ignore battery optimizations",
+                title = "Battery optimization list",
+                subtitle = "Tap → System list of battery-unrestricted apps",
                 priority = 7,
-                action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+                action = Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS,
                 "battery", "background", "cowlsly",
                 icon = "battery",
-                packageData = true,
-                fallbacks = listOf(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS),
             )
         )
         add(intent("date_time", "Date & time", "Tap → Timezone & automatic time", 7, Settings.ACTION_DATE_SETTINGS, "clock", "timezone", icon = "device"))

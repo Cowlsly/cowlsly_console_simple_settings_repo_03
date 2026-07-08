@@ -44,19 +44,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.cowlsly.simplesettings.data.SystemIntentLauncher
 import com.cowlsly.simplesettings.R
 import com.cowlsly.simplesettings.audio.SoundEffects
 import com.cowlsly.simplesettings.data.SettingsEntry
 import com.cowlsly.simplesettings.data.SettingsPanelType
-import com.cowlsly.simplesettings.data.SettingsRepository
 import com.cowlsly.simplesettings.data.SettingsRankHint
+import com.cowlsly.simplesettings.data.SettingsRepository
+import com.cowlsly.simplesettings.data.SystemIntentLauncher
 import com.cowlsly.simplesettings.ui.components.CogsBackground
 import com.cowlsly.simplesettings.ui.components.CowlslyConsoleSettingsButton
 import com.cowlsly.simplesettings.ui.components.GlassPanel
@@ -395,7 +395,8 @@ private fun SettingsEntryPanel(
                         onClick = {
                             viewModel.onEntryOpened(entry)
                             viewModel.syncEntry(entry.id)
-                            if (!entry.requiresPin) onLaunchIntent()
+                            // If still locked, PIN dialog will launch after unlock.
+                            if (viewModel.isEntryUnlocked(entry)) onLaunchIntent()
                         },
                         modifier = Modifier.fillMaxWidth(),
                     ) {

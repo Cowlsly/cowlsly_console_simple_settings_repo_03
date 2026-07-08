@@ -17,7 +17,8 @@ object SettingsSyncRegistry {
         SyncBinding("brightness_quick", SyncSource.SYSTEM, Settings.System.SCREEN_BRIGHTNESS, SyncControl.READ_ONLY),
         SyncBinding("display_settings", SyncSource.SYSTEM, Settings.System.SCREEN_BRIGHTNESS, SyncControl.READ_ONLY),
         SyncBinding("airplane", SyncSource.GLOBAL, Settings.Global.AIRPLANE_MODE_ON, SyncControl.READ_ONLY),
-        SyncBinding("location", SyncSource.SECURE, Settings.Secure.LOCATION_MODE, SyncControl.READ_ONLY),
+        // "location_mode" string avoids deprecated Settings.Secure.LOCATION_MODE constant.
+        SyncBinding("location", SyncSource.SECURE, "location_mode", SyncControl.READ_ONLY),
         SyncBinding("adb_enabled", SyncSource.GLOBAL, Settings.Global.ADB_ENABLED, SyncControl.READ_ONLY, ::formatOnOff),
         SyncBinding("spotify_default", SyncSource.INTENT, control = SyncControl.READ_ONLY),
         SyncBinding("cowlsly_account", SyncSource.LOCAL, control = SyncControl.LOCAL_EXPORT),

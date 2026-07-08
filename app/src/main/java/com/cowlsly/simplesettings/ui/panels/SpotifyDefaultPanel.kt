@@ -18,9 +18,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.cowlsly.simplesettings.CowlslyConsole
+import com.cowlsly.simplesettings.data.SettingsEntry
+import com.cowlsly.simplesettings.data.SettingsRankHint
+import com.cowlsly.simplesettings.ui.components.SettingsPanelHeader
 
 @Composable
-fun SpotifyDefaultPanel() {
+fun SpotifyDefaultPanel(
+    entry: SettingsEntry,
+    rankHint: SettingsRankHint,
+    onOpened: () -> Unit = {},
+) {
     val context = LocalContext.current
     val spotifyInstalled = rememberSpotifyInstalled()
     val roleLauncher = rememberLauncherForActivityResult(
@@ -28,7 +35,7 @@ fun SpotifyDefaultPanel() {
     ) { }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text("Spotify as default music", style = MaterialTheme.typography.titleMedium)
+        SettingsPanelHeader(entry = entry, rankHint = rankHint)
         Text(
             if (spotifyInstalled) "Choose Spotify when Android asks for your default music app."
             else "Install Spotify from Play Store first, then set it as default music.",
@@ -36,6 +43,7 @@ fun SpotifyDefaultPanel() {
         )
         Button(
             onClick = {
+                onOpened()
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     val roleManager = context.getSystemService(RoleManager::class.java)
                     if (roleManager.isRoleAvailable(MUSIC_ROLE)) {
@@ -56,6 +64,7 @@ fun SpotifyDefaultPanel() {
         if (!spotifyInstalled) {
             Button(
                 onClick = {
+                    onOpened()
                     val market = Intent(Intent.ACTION_VIEW).apply {
                         data = android.net.Uri.parse("market://details?id=${CowlslyConsole.SPOTIFY_PACKAGE}")
                         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

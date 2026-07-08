@@ -6,6 +6,7 @@ package com.cowlsly.simplesettings
  */
 object CowlslyConsole {
     const val SETTINGS_URL = "https://cowlsly.com/console/settings"
+    const val DEVOPS_URL = "https://cowlsly.com/console/devops"
     const val SIGNUP_URL = "https://cowlsly.com/account/create"
     const val WEBSITE_SETTINGS_SYNC_FILE = "cowlsly_website_settings_sync.json"
     const val SYNC_PULL_URL = "https://cowlsly.com/api/console/settings/sync"

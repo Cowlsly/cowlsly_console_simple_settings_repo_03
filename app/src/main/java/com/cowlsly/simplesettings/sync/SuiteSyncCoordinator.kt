@@ -143,9 +143,13 @@ class SuiteSyncCoordinator(
         revision: Long,
     ): SuiteSyncDocument {
         val scores = repository.usageTracker.combinedScoresSnapshot()
+        val neglect = repository.usageTracker.neglectScoresSnapshot(
+            SettingsCatalog.allEntries.map { it.id },
+        )
         val appOrder = SettingsSorter.sort(
             SettingsCatalog.allEntries,
             scores,
+            neglect,
             prefs.developerAccessGranted,
         ).map { it.id }
         val webOrder = SettingsSorter.sortAlphabetical(

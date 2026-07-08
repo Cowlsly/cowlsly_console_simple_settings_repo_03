@@ -6,6 +6,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
+import com.cowlsly.simplesettings.data.SettingsEntry
+import com.cowlsly.simplesettings.data.SettingsRankHint
+import com.cowlsly.simplesettings.ui.components.SettingsPanelHeader
 import com.cowlsly.simplesettings.ui.theme.CowlslyCyan
 import com.cowlsly.simplesettings.ui.theme.CowlslyGoldLight
 
@@ -26,9 +29,9 @@ val EXTERNAL_CREDITS = listOf(
 )
 
 @Composable
-fun CreditsPanel() {
+fun CreditsPanel(entry: SettingsEntry, rankHint: SettingsRankHint) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Text("Credits & acknowledgements", style = MaterialTheme.typography.titleMedium, color = CowlslyGoldLight)
+        SettingsPanelHeader(entry = entry, rankHint = rankHint)
         Text(
             "Simple Settings learns from these projects. We surface similar capabilities through intents and Shizuku — fair credit to their makers.",
             style = MaterialTheme.typography.bodySmall,

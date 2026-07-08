@@ -19,9 +19,9 @@
     <string name="permission_promoter_allow">Allow &amp; continue</string>
     <string name="permission_promoter_later">Not now — thanks</string>
     <string name="sync_all_refreshing">Syncing all settings from their sources…</string>
-    <string name="open_system_control">Open in Android Settings</string>
+    <string name="open_system_control">Tap to open in Android Settings</string>
     <string name="suite_sync_coherent">Synced with website &amp; suite apps</string>
     <string name="cowlsly_account_label">Cowlsly</string>
-    <string name="ordering_app_usage">App panels: most-used first</string>
+    <string name="ordering_app_usage">App panels: highest priority first, most-used rise within each zone</string>
     <string name="ordering_web_alpha">Website: always A→Z</string>
 </resources>

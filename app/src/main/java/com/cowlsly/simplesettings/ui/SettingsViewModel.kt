@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.cowlsly.simplesettings.data.SettingsCatalog
 import com.cowlsly.simplesettings.data.SettingsEntry
+import com.cowlsly.simplesettings.data.SettingsRankHint
 import com.cowlsly.simplesettings.data.SettingsRepository
 import com.cowlsly.simplesettings.data.SettingsSorter
 import com.cowlsly.simplesettings.data.UserPreferences
@@ -38,6 +39,7 @@ data class SettingsUiState(
     val suiteSyncStatus: SuiteSyncStatus = SuiteSyncStatus(),
     val pinUnlockedIds: Set<String> = emptySet(),
     val lockRequired: Boolean = false,
+    val rankHints: Map<String, SettingsRankHint> = emptyMap(),
 )
 
 class SettingsViewModel(private val repository: SettingsRepository) : ViewModel() {
@@ -55,8 +57,17 @@ class SettingsViewModel(private val repository: SettingsRepository) : ViewModel(
     private val sortedEntries = combine(
         repository.preferences,
         repository.usageTracker.combinedScores(),
-    ) { prefs, scores ->
-        SettingsSorter.sort(SettingsCatalog.allEntries, scores, prefs.developerAccessGranted)
+        repository.usageTracker.neglectScores(SettingsCatalog.allEntries.map { it.id }),
+    ) { prefs, scores, neglect ->
+        SettingsSorter.sort(SettingsCatalog.allEntries, scores, neglect, prefs.developerAccessGranted)
+    }
+
+    private val rankHints = combine(
+        sortedEntries,
+        repository.usageTracker.combinedScores(),
+        repository.usageTracker.neglectScores(SettingsCatalog.allEntries.map { it.id }),
+    ) { sorted, scores, neglect ->
+        SettingsSorter.rankHints(sorted, scores, neglect)
     }
 
     private val coreState = combine(
@@ -92,7 +103,8 @@ class SettingsViewModel(private val repository: SettingsRepository) : ViewModel(
         _syncStates,
         repository.suiteSync.status,
         pinBundle,
-    ) { base, syncStates, suiteStatus, pin ->
+        rankHints,
+    ) { base, syncStates, suiteStatus, pin, hints ->
         base.copy(
             pinDialogEntry = pin.pinEntry,
             pinInput = pin.pinInput,
@@ -101,6 +113,7 @@ class SettingsViewModel(private val repository: SettingsRepository) : ViewModel(
             pinUnlockedIds = pin.unlocked,
             lockRequired = pin.lockRequired,
             suiteSyncStatus = suiteStatus,
+            rankHints = hints,
         )
     }
 
@@ -230,8 +243,14 @@ class SettingsViewModel(private val repository: SettingsRepository) : ViewModel(
         if (_currentPage.value > 0) _currentPage.value--
     }
 
-    fun onEntryOpened(entry: SettingsEntry) {
+    /** Count a panel view toward most-used ranking (no PIN prompt). */
+    fun recordPanelView(entry: SettingsEntry) {
         viewModelScope.launch { repository.usageTracker.recordOpen(entry.id) }
+    }
+
+    /** Explicit open action — records usage and may request PIN for protected rows. */
+    fun onEntryOpened(entry: SettingsEntry) {
+        recordPanelView(entry)
         if (entry.requiresPin && entry.id !in _pinUnlockedIds.value) {
             requestPinFor(entry)
         }
@@ -293,7 +312,8 @@ class SettingsViewModel(private val repository: SettingsRepository) : ViewModel(
     private suspend fun recordSearchHits(query: String) {
         val prefs = repository.preferences.first()
         val scores = repository.usageTracker.combinedScoresSnapshot()
-        SettingsSorter.sort(SettingsCatalog.allEntries, scores, prefs.developerAccessGranted)
+        val neglect = repository.usageTracker.neglectScoresSnapshot(SettingsCatalog.allEntries.map { it.id })
+        SettingsSorter.sort(SettingsCatalog.allEntries, scores, neglect, prefs.developerAccessGranted)
             .filter { it.matchesQuery(query) }
             .forEach { repository.usageTracker.recordSearch(it.id) }
     }

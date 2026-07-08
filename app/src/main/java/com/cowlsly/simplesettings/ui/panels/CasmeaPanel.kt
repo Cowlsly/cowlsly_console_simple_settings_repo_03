@@ -14,10 +14,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.cowlsly.simplesettings.data.SettingsEntry
+import com.cowlsly.simplesettings.data.SettingsRankHint
 import com.cowlsly.simplesettings.data.UserPreferences
+import com.cowlsly.simplesettings.ui.components.SettingsPanelHeader
 
 @Composable
 fun CasmeaPanel(
+    entry: SettingsEntry,
+    rankHint: SettingsRankHint,
     prefs: UserPreferences,
     onSave: (
         name: String,
@@ -36,7 +41,7 @@ fun CasmeaPanel(
     var conditions by remember(prefs.casmeaConditions) { mutableStateOf(prefs.casmeaConditions) }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text("CASMEA medical info", style = MaterialTheme.typography.titleMedium)
+        SettingsPanelHeader(entry = entry, rankHint = rankHint)
         Text(
             "Single source of truth — CASMEA app reads this; edits only here.",
             style = MaterialTheme.typography.bodySmall,

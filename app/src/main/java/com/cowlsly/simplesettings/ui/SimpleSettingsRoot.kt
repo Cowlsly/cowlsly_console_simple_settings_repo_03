@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,6 +20,7 @@ import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -48,20 +50,25 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.cowlsly.simplesettings.data.SystemIntentLauncher
 import com.cowlsly.simplesettings.R
 import com.cowlsly.simplesettings.audio.SoundEffects
 import com.cowlsly.simplesettings.data.SettingsEntry
 import com.cowlsly.simplesettings.data.SettingsPanelType
 import com.cowlsly.simplesettings.data.SettingsRepository
+import com.cowlsly.simplesettings.data.SettingsRankHint
 import com.cowlsly.simplesettings.ui.components.CogsBackground
 import com.cowlsly.simplesettings.ui.components.CowlslyConsoleSettingsButton
 import com.cowlsly.simplesettings.ui.components.GlassPanel
 import com.cowlsly.simplesettings.ui.components.PageTurnerButtons
 import com.cowlsly.simplesettings.ui.components.PermissionPromoterCard
+import com.cowlsly.simplesettings.ui.components.SettingsPanelHeader
 import com.cowlsly.simplesettings.ui.components.SyncStatusRow
 import com.cowlsly.simplesettings.ui.panels.CasmeaPanel
 import com.cowlsly.simplesettings.ui.panels.CowlslyAccountPanel
 import com.cowlsly.simplesettings.ui.panels.CreditsPanel
+import com.cowlsly.simplesettings.ui.panels.DevOpsToolsPanel
+import com.cowlsly.simplesettings.ui.panels.HiddenDeviceAppsPanel
 import com.cowlsly.simplesettings.ui.panels.ShizukuPanel
 import com.cowlsly.simplesettings.ui.panels.SpotifyDefaultPanel
 import com.cowlsly.simplesettings.ui.panels.VolumePanel
@@ -195,9 +202,11 @@ fun SimpleSettingsRoot(repository: SettingsRepository) {
                 onSubmit = {
                     viewModel.submitPin { entry ->
                         when (entry.panelType) {
-                            SettingsPanelType.DEVELOPER_GATE,
+                            SettingsPanelType.DEVELOPER_GATE ->
+                                launchSystemIntent(context, entry, soundEffects)
+                            SettingsPanelType.SYSTEM_INTENT ->
+                                launchSystemIntent(context, entry, soundEffects)
                             SettingsPanelType.CASMEA_ENTRY -> Unit
-                            SettingsPanelType.SYSTEM_INTENT -> launchSystemIntent(context, entry, soundEffects)
                             else -> Unit
                         }
                     }
@@ -240,7 +249,8 @@ private fun SettingsEntryPanel(
 ) {
     val unlocked = viewModel.isEntryUnlocked(entry)
     val syncState = state.syncStates[entry.id]
-    GlassPanel {
+    val rankHint = state.rankHints[entry.id] ?: SettingsRankHint.NORMAL
+    GlassPanel(rankHint = rankHint) {
         SyncStatusRow(
             syncState = syncState,
             onRefresh = { viewModel.syncEntry(entry.id) },
@@ -248,9 +258,12 @@ private fun SettingsEntryPanel(
         Spacer(modifier = Modifier.height(8.dp))
         if (!unlocked) {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(entry.title, style = MaterialTheme.typography.titleMedium)
+                SettingsPanelHeader(entry = entry, rankHint = rankHint)
                 Text("Enter PIN to view and control this setting.", style = MaterialTheme.typography.bodySmall)
-                TextButton(onClick = { viewModel.requestPinFor(entry) }) {
+                TextButton(onClick = {
+                    viewModel.recordPanelView(entry)
+                    viewModel.requestPinFor(entry)
+                }) {
                     Text("Unlock")
                 }
             }
@@ -258,50 +271,113 @@ private fun SettingsEntryPanel(
         }
         when (entry.panelType) {
             SettingsPanelType.VOLUME -> VolumePanel(
+                entry = entry,
+                rankHint = rankHint,
                 stepIndex = state.preferences.volumeStepIndex,
                 isMuted = state.preferences.isMuted,
-                onStepSelected = viewModel::setVolumeStep,
-                onMuteToggled = viewModel::setMuted,
+                onStepSelected = {
+                    viewModel.recordPanelView(entry)
+                    viewModel.setVolumeStep(it)
+                },
+                onMuteToggled = {
+                    viewModel.recordPanelView(entry)
+                    viewModel.setMuted(it)
+                },
             )
             SettingsPanelType.PANEL_TINT -> {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("Panel colour tint", style = MaterialTheme.typography.titleMedium)
+                    SettingsPanelHeader(entry = entry, rankHint = rankHint)
                     Slider(
                         value = state.preferences.panelTint,
                         onValueChange = viewModel::setPanelTint,
+                        onValueChangeFinished = { viewModel.recordPanelView(entry) },
                     )
                 }
             }
             SettingsPanelType.CASMEA_ENTRY -> CasmeaPanel(
+                entry = entry,
+                rankHint = rankHint,
                 prefs = state.preferences,
-                onSave = viewModel::saveCasmea,
+                onSave = { name, blood, allergies, meds, contact, conditions ->
+                    viewModel.recordPanelView(entry)
+                    viewModel.saveCasmea(name, blood, allergies, meds, contact, conditions)
+                },
             )
             SettingsPanelType.IN_APP_TOGGLE -> {
-                RowToggle(
-                    title = entry.title,
-                    subtitle = entry.subtitle,
-                    checked = state.preferences.lockOnBackground,
-                    onCheckedChange = viewModel::setLockOnBackground,
-                )
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    SettingsPanelHeader(entry = entry, rankHint = rankHint)
+                    RowToggle(
+                        title = entry.title,
+                        subtitle = entry.subtitle,
+                        checked = state.preferences.lockOnBackground,
+                        onCheckedChange = {
+                            viewModel.recordPanelView(entry)
+                            viewModel.setLockOnBackground(it)
+                        },
+                        showTitle = false,
+                    )
+                }
             }
             SettingsPanelType.DEVELOPER_GATE -> DeveloperGatePanel(
                 entry = entry,
+                rankHint = rankHint,
                 prefs = state.preferences,
-                onOpen = { viewModel.onEntryOpened(entry) },
+                onOpen = {
+                    viewModel.onEntryOpened(entry)
+                    // After PIN unlock, onEntryOpened may only request PIN; launch
+                    // when already unlocked (or PIN just cleared for this session).
+                    if (viewModel.isEntryUnlocked(entry)) {
+                        onLaunchIntent()
+                    }
+                },
                 onGrantAccess = viewModel::grantDeveloperAccess,
             )
             SettingsPanelType.SHIZUKU_TOOL -> ShizukuPanel(
+                entry = entry,
+                rankHint = rankHint,
                 onRequestPermission = {
+                    viewModel.recordPanelView(entry)
                     viewModel.syncAllCoherent()
                     viewModel.promoteNextPermission()
                 },
             )
             SettingsPanelType.COWLSLY_ACCOUNT -> CowlslyAccountPanel(
-                onAccountLinked = { viewModel.syncAllCoherent() },
+                entry = entry,
+                rankHint = rankHint,
+                onAccountLinked = {
+                    viewModel.recordPanelView(entry)
+                    viewModel.syncAllCoherent()
+                },
             )
-            SettingsPanelType.SPOTIFY_DEFAULT -> SpotifyDefaultPanel()
-            SettingsPanelType.CREDITS -> CreditsPanel()
+            SettingsPanelType.SPOTIFY_DEFAULT -> SpotifyDefaultPanel(
+                entry = entry,
+                rankHint = rankHint,
+                onOpened = { viewModel.recordPanelView(entry) },
+            )
+            SettingsPanelType.HIDDEN_DEVICE_APPS -> HiddenDeviceAppsPanel(
+                entry = entry,
+                onOpened = { viewModel.recordPanelView(entry) },
+            )
+            SettingsPanelType.DEVOPS_TOOLS -> {
+                val panelContext = LocalContext.current
+                DevOpsToolsPanel(
+                    entry = entry,
+                    onExportSync = {
+                        viewModel.recordPanelView(entry)
+                        viewModel.exportSyncJson { json ->
+                            val share = Intent(Intent.ACTION_SEND).apply {
+                                type = "application/json"
+                                putExtra(Intent.EXTRA_TEXT, json)
+                            }
+                            panelContext.startActivity(Intent.createChooser(share, "Export sync JSON"))
+                        }
+                    },
+                )
+            }
+            SettingsPanelType.CREDITS -> CreditsPanel(entry = entry, rankHint = rankHint)
             SettingsPanelType.ABOUT -> AboutPanel(
+                entry = entry,
+                rankHint = rankHint,
                 prefs = state.preferences,
                 suiteStatus = state.suiteSyncStatus,
                 onGrantDeveloper = viewModel::grantDeveloperAccess,
@@ -309,12 +385,13 @@ private fun SettingsEntryPanel(
                 onImport = { raw, done -> viewModel.importSyncJson(raw, done) },
             )
             SettingsPanelType.SYSTEM_INTENT -> {
-                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(entry.title, style = MaterialTheme.typography.titleMedium)
-                    if (entry.subtitle.isNotBlank()) {
-                        Text(entry.subtitle, style = MaterialTheme.typography.bodySmall, color = Color.White.copy(0.7f))
-                    }
-                    TextButton(
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    SettingsPanelHeader(entry = entry, rankHint = rankHint)
+                    Text(
+                        "How to open: tap the button below — Android Settings opens for this control.",
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                    Button(
                         onClick = {
                             viewModel.onEntryOpened(entry)
                             viewModel.syncEntry(entry.id)
@@ -323,27 +400,16 @@ private fun SettingsEntryPanel(
                         modifier = Modifier.fillMaxWidth(),
                     ) {
                         Text(stringResource(R.string.open_system_control))
+                        Spacer(modifier = Modifier.size(8.dp))
+                        Icon(
+                            Icons.Default.ChevronRight,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp),
+                        )
                     }
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun RowWithChevron(title: String, subtitle: String) {
-    androidx.compose.foundation.layout.Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Column(modifier = Modifier.weight(1f)) {
-            Text(title, style = MaterialTheme.typography.titleMedium)
-            if (subtitle.isNotBlank()) {
-                Text(subtitle, style = MaterialTheme.typography.bodySmall, color = Color.White.copy(0.7f))
-            }
-        }
-        Icon(Icons.Default.ChevronRight, contentDescription = null, tint = CowlslyCyan)
     }
 }
 
@@ -353,15 +419,20 @@ private fun RowToggle(
     subtitle: String,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
+    showTitle: Boolean = true,
 ) {
     androidx.compose.foundation.layout.Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Column(modifier = Modifier.weight(1f)) {
-            Text(title, style = MaterialTheme.typography.titleMedium)
-            Text(subtitle, style = MaterialTheme.typography.bodySmall)
+        if (showTitle) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(title, style = MaterialTheme.typography.titleMedium)
+                Text(subtitle, style = MaterialTheme.typography.bodySmall)
+            }
+        } else {
+            Spacer(modifier = Modifier.weight(1f))
         }
         Switch(checked = checked, onCheckedChange = onCheckedChange)
     }
@@ -370,26 +441,41 @@ private fun RowToggle(
 @Composable
 private fun DeveloperGatePanel(
     entry: SettingsEntry,
+    rankHint: SettingsRankHint,
     prefs: com.cowlsly.simplesettings.data.UserPreferences,
     onOpen: () -> Unit,
     onGrantAccess: (String) -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        RowWithChevron(title = entry.title, subtitle = entry.subtitle)
+        SettingsPanelHeader(entry = entry, rankHint = rankHint)
         Text(
-            if (prefs.developerAccessGranted) "Access granted — tap any dev row or enter PIN when prompted."
-            else "Grant developer access in About first.",
+            if (prefs.developerAccessGranted) {
+                "How to open: enter PIN when asked, then Android Developer options opens. " +
+                    "Every developer row below is tappable the same way."
+            } else {
+                "How to open: grant developer access in About (set a PIN), enable Build number ×7 " +
+                    "in About phone, then return here and tap Open."
+            },
             style = MaterialTheme.typography.bodySmall,
         )
-        TextButton(onClick = onOpen) {
+        Button(
+            onClick = onOpen,
+            enabled = prefs.developerAccessGranted,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
             Icon(Icons.Default.Settings, contentDescription = null, modifier = Modifier.size(18.dp))
-            Text("Open developer tools (PIN)")
+            Spacer(modifier = Modifier.size(8.dp))
+            Text("Open Developer options")
+            Spacer(modifier = Modifier.size(8.dp))
+            Icon(Icons.Default.ChevronRight, contentDescription = null, modifier = Modifier.size(18.dp))
         }
     }
 }
 
 @Composable
 private fun AboutPanel(
+    entry: SettingsEntry,
+    rankHint: SettingsRankHint,
     prefs: com.cowlsly.simplesettings.data.UserPreferences,
     suiteStatus: com.cowlsly.simplesettings.sync.SuiteSyncStatus,
     onGrantDeveloper: (String) -> Unit,
@@ -401,7 +487,7 @@ private fun AboutPanel(
     var importJson by remember { mutableStateOf("") }
     var importResult by remember { mutableStateOf<String?>(null) }
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text("About Simple Settings", style = MaterialTheme.typography.titleMedium)
+        SettingsPanelHeader(entry = entry, rankHint = rankHint)
         Text("Version 1.0.0 — Cowlsly Console suite", style = MaterialTheme.typography.bodySmall)
         Text(
             "Suite sync rev ${suiteStatus.revision} — website, apps, and phone stay coherent.",
@@ -517,11 +603,16 @@ private fun launchSystemIntent(
     entry: SettingsEntry,
     soundEffects: SoundEffects,
 ) {
-    val action = entry.intentAction ?: return
-    try {
-        soundEffects.playPress()
-        context.startActivity(Intent(action).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-    } catch (_: Exception) {
-        soundEffects.playDenied()
+    // Developer gate may only set the action; still open Developer options.
+    val target = if (entry.intentAction == null && entry.panelType == SettingsPanelType.DEVELOPER_GATE) {
+        entry.copy(intentAction = Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS)
+    } else {
+        entry
     }
+    if (target.intentAction == null && target.componentPackage == null) {
+        soundEffects.playDenied()
+        return
+    }
+    val ok = SystemIntentLauncher.launch(context, target)
+    if (ok) soundEffects.playPress() else soundEffects.playDenied()
 }

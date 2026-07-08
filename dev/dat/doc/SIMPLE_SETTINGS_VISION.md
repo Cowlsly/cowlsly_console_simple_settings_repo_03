@@ -36,13 +36,15 @@ Other Cowlsly apps **include or deep-link** into Simple Settings instead of rebu
 
 ## The settings pages — priority order
 
-Page 1 = closest to you. Later pages = deeper system layers. **Base priority never changes without updating this doc and `SettingsCatalog`; usage/search scores reorder within that.**
+Page 1 = closest to you. Later pages = deeper system layers. **Base priority never changes without updating this doc and `SettingsCatalog`; usage/search scores reorder within each priority zone.**
 
 | Mechanism | Rule |
 |-----------|------|
-| `basePriority` | P1 closest … P13 credits last |
-| `open` events | +3 rank boost per open |
-| `search` hits | +2 rank boost per search |
+| `basePriority` | Highest priority first: P1 closest … P13 credits last |
+| Within zone | Most-used first (`open`×3 + `search`×2), then longest-waiting |
+| `open` events | +3 rank score per deliberate open / control use |
+| `search` hits | +2 rank score per search hit |
+| Availability | Every non-developer catalog entry is always on the list; developer rows appear after access is granted |
 | Page size | 6 panels per page (phone) |
 
 | P | Zone | What the user gets |

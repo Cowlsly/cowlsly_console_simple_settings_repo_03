@@ -16,19 +16,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.cowlsly.simplesettings.account.CowlslyAccountManager
+import com.cowlsly.simplesettings.data.SettingsEntry
+import com.cowlsly.simplesettings.data.SettingsRankHint
+import com.cowlsly.simplesettings.ui.components.SettingsPanelHeader
 import com.cowlsly.simplesettings.ui.theme.CowlslyCyan
 
 @Composable
 fun CowlslyAccountPanel(
+    entry: SettingsEntry,
+    rankHint: SettingsRankHint,
     onAccountLinked: () -> Unit,
 ) {
     val context = LocalContext.current
     var email by remember { mutableStateOf("") }
     val linked = remember { mutableStateOf(CowlslyAccountManager.hasAccount(context)) }
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text("Cowlsly account sync", style = MaterialTheme.typography.titleMedium)
+        SettingsPanelHeader(entry = entry, rankHint = rankHint)
         Text(
-            "Add your Cowlsly account to this phone's Accounts. Settings values self-sync with cowlsly.com and suite apps. Panel order stays usage-based on the app; the website is always A→Z.",
+            "Add your Cowlsly account to this phone's Accounts. Settings values self-sync with cowlsly.com and suite apps.",
             style = MaterialTheme.typography.bodySmall,
         )
         Text(

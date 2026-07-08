@@ -74,10 +74,12 @@ class SettingsRepository(context: Context) {
     val pagedSettings: Flow<List<List<SettingsEntry>>> = combine(
         preferences,
         usageTracker.combinedScores(),
-    ) { prefs, scores ->
+        usageTracker.neglectScores(SettingsCatalog.allEntries.map { it.id }),
+    ) { prefs, scores, neglect ->
         val sorted = SettingsSorter.sort(
             SettingsCatalog.allEntries,
             scores,
+            neglect,
             prefs.developerAccessGranted,
         )
         SettingsSorter.paginate(sorted, SettingsCatalog.PAGE_SIZE)

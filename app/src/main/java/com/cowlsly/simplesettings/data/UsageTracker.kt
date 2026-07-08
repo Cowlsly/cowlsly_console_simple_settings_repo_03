@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -31,10 +32,20 @@ class UsageTracker(private val context: Context) {
         }.toMap()
     }
 
+    fun lastOpenTimestamps(): Flow<Map<String, Long>> = dataStore.data.map { prefs ->
+        prefs.asMap().mapNotNull { (key, value) ->
+            if (key.name.startsWith("last_open_") && value is Long) {
+                key.name.removePrefix("last_open_") to value
+            } else null
+        }.toMap()
+    }
+
     suspend fun recordOpen(entryId: String) {
-        val key = intPreferencesKey("open_$entryId")
+        val openKey = intPreferencesKey("open_$entryId")
+        val lastKey = longPreferencesKey("last_open_$entryId")
         dataStore.edit { prefs ->
-            prefs[key] = (prefs[key] ?: 0) + 1
+            prefs[openKey] = (prefs[openKey] ?: 0) + 1
+            prefs[lastKey] = System.currentTimeMillis()
         }
     }
 
@@ -60,5 +71,27 @@ class UsageTracker(private val context: Context) {
         }
     }
 
+    /**
+     * Neglect score — higher means the setting has been missed longer and should float closer.
+     * Never-opened entries receive a stable baseline so they gently surface over time.
+     */
+    fun neglectScores(entryIds: Collection<String>): Flow<Map<String, Int>> =
+        lastOpenTimestamps().map { lastOpens ->
+            val now = System.currentTimeMillis()
+            val dayMs = 86_400_000L
+            entryIds.associateWith { id ->
+                val last = lastOpens[id]
+                if (last == null) {
+                    28 + (id.hashCode() and 0x7).coerceAtLeast(0)
+                } else {
+                    val days = ((now - last) / dayMs).toInt().coerceAtLeast(0)
+                    (days * 3).coerceAtMost(72)
+                }
+            }
+        }
+
     suspend fun combinedScoresSnapshot(): Map<String, Int> = combinedScores().first()
+
+    suspend fun neglectScoresSnapshot(entryIds: Collection<String>): Map<String, Int> =
+        neglectScores(entryIds).first()
 }

@@ -18,12 +18,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.cowlsly.simplesettings.data.SettingsEntry
+import com.cowlsly.simplesettings.data.SettingsRankHint
+import com.cowlsly.simplesettings.ui.components.SettingsPanelHeader
 import com.cowlsly.simplesettings.ui.theme.CowlslyWarning
 
 val VOLUME_STEPS = listOf(0, 25, 50, 75, 90)
 
 @Composable
 fun VolumePanel(
+    entry: SettingsEntry,
+    rankHint: SettingsRankHint,
     stepIndex: Int,
     isMuted: Boolean,
     onStepSelected: (Int) -> Unit,
@@ -35,7 +40,7 @@ fun VolumePanel(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text("Volume & mute", style = MaterialTheme.typography.titleMedium)
+            SettingsPanelHeader(entry = entry, rankHint = rankHint, modifier = Modifier.weight(1f))
             IconButton(onClick = { onMuteToggled(!isMuted) }) {
                 Icon(
                     imageVector = if (isMuted) Icons.Default.VolumeOff else Icons.Default.VolumeUp,

@@ -13,15 +13,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.cowlsly.simplesettings.data.SettingsEntry
+import com.cowlsly.simplesettings.data.SettingsRankHint
 import com.cowlsly.simplesettings.shizuku.ShizukuHelper
+import com.cowlsly.simplesettings.ui.components.SettingsPanelHeader
 import com.cowlsly.simplesettings.shizuku.ShizukuStatus
 
 @Composable
-fun ShizukuPanel(onRequestPermission: () -> Unit) {
+fun ShizukuPanel(
+    entry: SettingsEntry,
+    rankHint: SettingsRankHint,
+    onRequestPermission: () -> Unit,
+) {
     var status by remember { mutableStateOf(ShizukuHelper.status()) }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text("Shizuku", style = MaterialTheme.typography.titleMedium)
+        SettingsPanelHeader(entry = entry, rankHint = rankHint)
         Text(
             "Grants privileged access for hidden settings, secure settings reads, and developer tooling — same role as recommended companion apps.",
             style = MaterialTheme.typography.bodySmall,

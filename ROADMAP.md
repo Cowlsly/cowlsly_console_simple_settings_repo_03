@@ -9,6 +9,7 @@ See `dev/dat/doc/SIMPLE_SETTINGS_VISION.md` for the full master settings app des
 **Simple** means the settings you need most are **closest to you** — not that the app is stripped down.
 
 ## Latest Build Log
+- 2026-07-08 — Full catalog available: expanded system settings (USB, print, network operators, bubbles, WebView, exact alarms, …). List order = highest base priority first, most-used within each zone. Usage recorded on every panel interaction.
 - 2026-07-08 — **Phase 1 complete.** Verified debug build (`assembleDebug` with Java 21). All source, docs, and Gradle scaffold pushed to remote.
 - 2026-07-08 — Scaffolded Android app (`app/`): Jetpack Compose, paged glass panels over animated cogs, search bar, usage/search ranking, 50+ system setting intents, Shizuku hook, CASMEA content provider, credits page.
 - 2026-07-08 — Page 1 pinned Cowlsly Console Settings logo button → `https://cowlsly.com/console/settings`.

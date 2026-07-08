@@ -25,6 +25,8 @@ Labeled catalog of all assets in this repo. Each entry maps to a Phase 1 roadmap
 | `simple_settings_hearing_warning_icon_transparent.svg` | `phase-1`, `icon`, `transparent`, `volume` | Hearing-damage warning for headphone/earbud use |
 | `simple_settings_casmea_info_entry_icon_transparent.svg` | `phase-1`, `icon`, `transparent`, `casmea` | Personal/medical information entry screen |
 | `simple_settings_developer_shortcut_icon_transparent.svg` | `phase-1`, `icon`, `transparent`, `developer` | Developer-options shortcut (visible only after access granted) |
+| `simple_settings_security_privacy_icon_transparent.svg` | `phase-3`, `icon`, `transparent`, `security`, `privacy` | Security and privacy zone |
+| `simple_settings_device_settings_icon_transparent.svg` | `phase-2`, `icon`, `transparent`, `device` | Regular device settings launcher zone |
 
 ## UI badges (`assets/images/ui/volume_steps/`)
 

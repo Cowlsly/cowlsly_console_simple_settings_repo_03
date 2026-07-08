@@ -48,6 +48,13 @@ See `ASSET_MANIFEST.md` for the full labeled index. Summary by roadmap scope:
 |-------|------|
 | Developer shortcut icon | `images/icons/simple_settings_developer_shortcut_icon_transparent.svg` |
 
+### D) Security, privacy & device (vision phases 2–3)
+
+| Asset | Path |
+|-------|------|
+| Security & privacy zone icon | `images/icons/simple_settings_security_privacy_icon_transparent.svg` |
+| Device settings zone icon | `images/icons/simple_settings_device_settings_icon_transparent.svg` |
+
 ### Branding
 
 | Asset | Path |

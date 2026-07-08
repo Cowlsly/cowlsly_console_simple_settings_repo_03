@@ -10,17 +10,30 @@ Cyberpunk UI in this repo follows the Cowlsly design language: neon glass panels
 
 ### Current status
 
-Planning / quick-win build. Phase 1 assets are in place.
+Planning — **master settings hub** for the Cowlsly suite. Phase 1 assets are in place; full vision documented.
 
-### Phase 1 intent
+### What Simple Settings is
 
-* Shared app settings module.
+One app. One scroll. The settings you need most are **closest to you** at the top — volume, tint, security, privacy — then every regular device setting category, then developer options (opened only after access is granted).
+
+* **Closest** — volume, mute, panel tint, hearing-safe steps
+* **Security & privacy** — PIN, biometrics, permissions, privacy dashboard
+* **Personal** — profile + CASMEA medical info entry (edits only here)
+* **Device** — Wi‑Fi, display, sound, storage, battery, apps, notifications, accounts (system intents)
+* **Developer** — gated section; PIN re-entry; opens Android Developer Options
+
+See `dev/dat/doc/SIMPLE_SETTINGS_VISION.md` for the full design.
+
+### Phase 1 intent (building now)
+
+* Volume control with safe-listening steps.
 * CASMEA information entry screen.
-* Controlled developer shortcut after access is granted.
+* Developer shortcut stub (visible only after access granted).
 
 ### Documents
 
-* `ROADMAP.md` — active build roadmap for this repo.
+* `dev/dat/doc/SIMPLE_SETTINGS_VISION.md` — **master settings app vision** (full scroll, all zones).
+* `ROADMAP.md` — active build phases.
 * `dev/dat/doc/ROADMAP.ORIGINAL.md` — founding context and rebuild notes.
 * `assets/README.md` — asset naming, folder layout, and Phase 1 catalog.
 * `assets/ASSET_MANIFEST.md` — labeled asset index with phase mapping.

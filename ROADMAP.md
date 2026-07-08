@@ -1,34 +1,67 @@
 # ROADMAP — cowlsly_console_simple_settings_repo_03
 
 ## Status
-Planning — second "quick win" build, designed to be reused across the whole app suite.
+Planning — master settings hub for the Cowlsly Console suite. Phase 1 is the first quick-win slice.
+
+## North-star vision
+See `dev/dat/doc/SIMPLE_SETTINGS_VISION.md` for the full master settings app design: one scroll, closest settings first, then security & privacy, all regular device settings, and gated developer options.
+
+**Simple** means the settings you need most are **closest to you** — not that the app is stripped down.
 
 ## Latest Asset / Documentation Log
 - 2026-07-08 — Added `assets/images/icons/simple_settings_volume_steps_icon_transparent.svg` as the first real transparent Simple Settings icon. Added `assets/README.md` with suite-safe asset naming rules.
 - 2026-07-08 — Completed Phase 1 asset set: module icon, volume/mute/warning icons, CASMEA entry icon, developer shortcut icon, and five volume-step UI badges (0–90%). Added `assets/ASSET_MANIFEST.md` with labels and phase mapping.
 - 2026-07-08 — Added shared Cowlsly branding kit (`assets/branding/`) with small logo, forever-turning cogs background SVG, and `Cowlsly/BRANDING.md` suite standard.
+- 2026-07-08 — Added `dev/dat/doc/SIMPLE_SETTINGS_VISION.md` (master settings hub design). Added security/privacy and device-settings zone icons.
 
 ## Purpose
-A single, shared settings module that other Cowlsly apps point to or include, rather than each app rebuilding its own settings screen from scratch.
+A single, shared **master settings module** that other Cowlsly apps point to or include — volume, security, privacy, personal info, every regular device setting category, and developer options (when access is granted).
 
-## Phase 1 Scope
+## Settings zones (priority scroll)
+
+| P | Zone | Phase |
+|---|------|-------|
+| 1 | Closest: volume, mute, panel tint, hearing warning | **1** |
+| 2 | Sound & display shortcuts | 2 |
+| 3 | Security: PIN, password, biometrics, lock behaviour | 3 |
+| 4 | Privacy: permissions hub, privacy dashboard links | 3 |
+| 5 | Personal info + CASMEA medical entry | **1** (entry), 3 (full profile) |
+| 6 | Network & connectivity (system intents) | 2 |
+| 7 | Device: storage, battery, language, accessibility | 2 |
+| 8 | Apps & default apps | 2 |
+| 9 | Notifications | 2 |
+| 10 | Accounts & backup | 2 |
+| 11 | Developer options (gated; opens when access granted) | **1** (stub), 4 (live) |
+| 12 | About & website sync | 5 |
+
+## Phase 1 Scope (building now)
 - **A) Volume control**: mute, plus stepped levels (0% / 25% / 50% / 75% / 90%) — no 100% option, with a built-in hearing-damage warning for headphone/earbud use.
 - **B) Base information entry screen**: the single source of truth for personal/medical info displayed by `cowlsly_console_medical_emergency_assistant_casmea_repo_02`. Note: the CASMEA app itself has no data-entry screen — entry only happens here, for security.
-- **C) Developer options shortcut**: a fast-access button to developer tools, visible only if developer access has already been explicitly granted.
+- **C) Developer options shortcut**: a fast-access button to developer tools, visible only if developer access has already been explicitly granted. PIN/password re-entry required each visit.
 
-## Explicitly Out of Scope (for now)
-- Anything beyond these three settings — additional settings are added only as other apps need them.
+## Later phases (from vision doc)
+- **Phase 2** — System intent launcher for all regular device settings (network, display, apps, notifications, accounts).
+- **Phase 3** — Full security & privacy hub wired to suite lock model.
+- **Phase 4** — Live developer gate + `APPLICATION_DEVELOPMENT_SETTINGS` links.
+- **Phase 5** — Website sync JSON for console + profile fields.
+- **Phase 6** — Embeddable module SDK for Vault, CASMEA, Cowlsly.com.
+
+## Explicitly Out of Scope
+- Storing ALI-Key API secrets (stays in Vault keyring).
+- Duplicating Android's private settings storage — we **lead** users to system screens.
 
 ## Dependencies
 - Consumed by `cowlsly_console_medical_emergency_assistant_casmea_repo_02` and, later, `cowlsly_console_authenticator_repo_04`.
+- Aligns with Vault `docs/cowlsly_settings_control.md` (layer 1: console UI).
 
 ## Current Asset Notes
 - `assets/README.md` — asset naming, folder layout, and reuse notes.
-- `assets/ASSET_MANIFEST.md` — labeled catalog mapping every asset to Phase 1 scope.
-- `assets/branding/` — shared Cowlsly small logo + forever-turning cogs background (required in every suite repo).
+- `assets/ASSET_MANIFEST.md` — labeled catalog mapping every asset to scope.
+- `assets/branding/` — shared Cowlsly small logo + forever-turning cogs background.
 - `Cowlsly/BRANDING.md` — suite-wide rules for logo embeds and cyberpunk backgrounds.
-- `assets/images/icons/` — six transparent SVG icons (module, volume, mute, warning, CASMEA entry, developer shortcut).
+- `assets/images/icons/` — eight transparent SVG zone icons.
 - `assets/images/ui/volume_steps/` — five transparent step badges (0%, 25%, 50%, 75%, 90%).
 
 ## Related Documents
-- See `dev/dat/doc/ROADMAP.ORIGINAL.md` for the original founding notes and full context behind this repo.
+- `dev/dat/doc/SIMPLE_SETTINGS_VISION.md` — full master settings app vision.
+- `dev/dat/doc/ROADMAP.ORIGINAL.md` — founding context and rebuild notes.

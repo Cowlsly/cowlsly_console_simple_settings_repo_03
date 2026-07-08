@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+<title>simple settings security privacy transparent icon</title>
+<desc>Transparent SVG icon for Cowlsly Simple Settings security and privacy zone.</desc>
+<defs>
+  <radialGradient id="bg" cx="50%" cy="42%" r="60%">
+    <stop offset="0" stop-color="#17304d"/>
+    <stop offset=".7" stop-color="#071321"/>
+    <stop offset="1" stop-color="#020610" stop-opacity=".96"/>
+  </radialGradient>
+  <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#fff2a8"/>
+    <stop offset=".5" stop-color="#d7a93d"/>
+    <stop offset="1" stop-color="#815b18"/>
+  </linearGradient>
+  <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+    <feGaussianBlur stdDeviation="9" result="b"/>
+    <feMerge>
+      <feMergeNode in="b"/>
+      <feMergeNode in="SourceGraphic"/>
+    </feMerge>
+  </filter>
+</defs>
+<circle cx="256" cy="256" r="190" fill="url(#bg)" stroke="url(#gold)" stroke-width="14" filter="url(#glow)"/>
+<path d="M256 118l118 54v88c0 74-50 114-118 140-68-26-118-66-118-140v-88Z" fill="#081827" stroke="#20f0ff" stroke-width="12" stroke-linejoin="round"/>
+<circle cx="256" cy="286" r="34" fill="none" stroke="url(#gold)" stroke-width="10"/>
+<path d="M256 262v34l22 14" fill="none" stroke="#20f0ff" stroke-width="10" stroke-linecap="round"/>
+<circle cx="330" cy="198" r="18" fill="#071321" stroke="#ff5c78" stroke-width="6"/>
+<path d="M330 190v16M322 198h16" stroke="#fff2a8" stroke-width="4" stroke-linecap="round"/>
+</svg>

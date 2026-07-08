@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+
+    <permission
+        android:name="com.cowlsly.simplesettings.permission.READ_CASMEA"
+        android:protectionLevel="normal" />
+    <permission
+        android:name="com.cowlsly.simplesettings.permission.READ_SUITE_SYNC"
+        android:protectionLevel="normal" />
+
+    <application
+        android:name=".SimpleSettingsApplication"
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.SimpleSettings">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.SimpleSettings"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <provider
+            android:name=".data.CasmeaContentProvider"
+            android:authorities="com.cowlsly.simplesettings.casmea"
+            android:exported="true"
+            android:readPermission="com.cowlsly.simplesettings.permission.READ_CASMEA" />
+
+        <provider
+            android:name=".account.CowlslySyncStubProvider"
+            android:authorities="com.cowlsly.simplesettings.provider"
+            android:exported="false"
+            android:syncable="true" />
+
+        <service
+            android:name=".account.CowlslyAuthenticatorService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/cowlsly_authenticator" />
+        </service>
+
+        <service
+            android:name=".account.CowlslySyncService"
+            android:exported="true"
+            android:syncable="true">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/cowlsly_syncadapter" />
+        </service>
+
+        <provider
+            android:name=".data.SuiteSyncContentProvider"
+            android:authorities="com.cowlsly.simplesettings.sync"
+            android:exported="true"
+            android:readPermission="com.cowlsly.simplesettings.permission.READ_SUITE_SYNC" />
+
+        <provider
+            android:name="rikka.shizuku.ShizukuProvider"
+            android:authorities="${applicationId}.shizuku"
+            android:enabled="true"
+            android:exported="true"
+            android:multiprocess="false"
+            android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" />
+    </application>
+</manifest>

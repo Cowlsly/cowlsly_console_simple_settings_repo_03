@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<account-authenticator xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accountType="com.cowlsly.account"
+    android:icon="@drawable/cowlsly_logo_small"
+    android:label="@string/cowlsly_account_label"
+    android:smallIcon="@drawable/cowlsly_logo_small" />

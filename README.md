@@ -10,7 +10,11 @@ Cyberpunk UI in this repo follows the Cowlsly design language: neon glass panels
 
 ### Current status
 
-Planning — **master settings hub** for the Cowlsly suite. Phase 1 assets are in place; full vision documented.
+**Phase 1 complete** — Android app in `app/` with paged settings panels, search, usage-based ordering, and Phase 1 features (volume, CASMEA entry, developer gate). Build with **Java 21** (Java 25 is not supported by the current Kotlin Gradle plugin):
+
+```bash
+JAVA_HOME=/path/to/java-21 ./gradlew assembleDebug
+```
 
 ### What Simple Settings is
 
@@ -24,11 +28,11 @@ One app. One scroll. The settings you need most are **closest to you** at the to
 
 See `dev/dat/doc/SIMPLE_SETTINGS_VISION.md` for the full design.
 
-### Phase 1 intent (building now)
+### Phase 1 (shipped)
 
-* Volume control with safe-listening steps.
-* CASMEA information entry screen.
-* Developer shortcut stub (visible only after access granted).
+* Volume control with safe-listening steps (0–90%, hearing warning).
+* CASMEA information entry screen (`CasmeaContentProvider` for repo 02).
+* Developer shortcut (gated; PIN re-entry; Shizuku + system dev intents).
 
 ### Documents
 

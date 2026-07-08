@@ -1,169 +1,126 @@
-# Simple Settings — What Needs to Be Done
+# Simple Settings — Phase 1 Complete
 
 **Repo:** `cowlsly_console_simple_settings_repo_03`  
 **Date:** 2026-07-08  
-**Status:** Planning / quick-win build — assets and docs are in place; **no application code exists yet**
+**Status:** Phase 1 shipped — Android app in `app/`, docs and assets in place
 
 ---
 
 ## Executive summary
 
-Cowlsly Simple Settings is meant to be a **single, shared settings module** that every Cowlsly Console app can point to or embed, instead of each app rebuilding its own settings screen.
-
-Phase 1 is deliberately small: three features only (volume, CASMEA info entry, developer shortcut). The visual identity, icon set, and roadmap are ready. **The remaining work is almost entirely implementation** — scaffolding the app/module, building the three screens, wiring storage and permissions, and integrating with CASMEA and future suite apps.
+Cowlsly Simple Settings is the **master settings hub** for the Cowlsly Console suite. Phase 1 delivers the three core features (volume, CASMEA entry, developer shortcut) inside a full paged settings shell with search, usage-based ordering, suite sync, and Cowlsly cyberpunk branding.
 
 ---
 
-## What is already done
+## What is done
 
 | Area | Status | Notes |
 |------|--------|-------|
-| Roadmap & scope | Done | `ROADMAP.md` defines Phase 1 A/B/C and out-of-scope rules |
+| Roadmap & scope | Done | `ROADMAP.md` — Phase 1 complete |
+| Master vision | Done | `dev/dat/doc/SIMPLE_SETTINGS_VISION.md` |
 | Founding context | Done | `dev/dat/doc/ROADMAP.ORIGINAL.md` |
-| Phase 1 SVG assets | Done | 6 icons + 5 volume-step badges in `assets/images/` |
-| Asset catalog | Done | `assets/ASSET_MANIFEST.md` with labels and phase mapping |
-| Branding kit | Done | Logo, cogs background, `Cowlsly/BRANDING.md` |
-| Documentation | Done | README, GitBook structure under `Cowlsly/` |
-| Application code | **Not started** | No Kotlin/Java, Gradle, or UI implementation in this repo |
+| Phase 1 SVG assets | Done | Icons + volume-step badges in `assets/images/` |
+| Asset catalog | Done | `assets/ASSET_MANIFEST.md` |
+| Branding kit | Done | `assets/branding/`, `Cowlsly/BRANDING.md` |
+| GitBook / docs tree | Done | `Cowlsly/SUMMARY.md`, README, REPORT |
+| Android application | **Done** | `app/` — Jetpack Compose, 46 Kotlin sources |
+| Build | **Done** | `JAVA_HOME=/path/to/java-21 ./gradlew assembleDebug` |
 
 ---
 
-## Phase 1 features to build
+## Phase 1 features shipped
 
 ### A) Volume control
 
-**Requirement:** Mute toggle plus stepped levels at **0% / 25% / 50% / 75% / 90%** only. No 100% option. Show a hearing-damage warning when headphones/earbuds are in use.
+- Mute toggle and stepped levels: **0% / 25% / 50% / 75% / 90%** (no 100%).
+- Hearing-damage warning when headphones are in use.
+- `VolumePanel.kt` + `SettingsViewModel` persistence via `SecurePrefs`.
 
-**Implementation tasks:**
+### B) CASMEA information entry
 
-- [ ] Create volume settings screen with cyberpunk glass-panel UI over the cogs background
-- [ ] Wire mute control using `simple_settings_volume_mute_icon_transparent.svg`
-- [ ] Implement stepped level selector using the five `volume_step_*_percent` badges
-- [ ] Enforce the 90% ceiling in logic (no 100% path in UI or API)
-- [ ] Show hearing-damage warning (`simple_settings_hearing_warning_icon_transparent.svg`) when appropriate (headphone/earbud detection or user acknowledgment flow — confirm platform behavior with Vault/CASMEA repos)
-- [ ] Persist volume preference and expose it to consuming apps (shared prefs, content provider, or suite SDK — **decision needed**)
-- [ ] Apply volume changes to system/media audio on the target platform
-
-**Assets ready:** volume steps icon, mute icon, warning icon, five step badges (see `assets/ASSET_MANIFEST.md`).
-
----
-
-### B) CASMEA information entry screen
-
-**Requirement:** This repo is the **only** place personal/medical information is entered. The CASMEA emergency app (`cowlsly_console_medical_emergency_assistant_casmea_repo_02`) reads data from here but has **no data-entry screen** — by design, for security.
-
-**Implementation tasks:**
-
-- [ ] Design and build the info-entry form (fields TBD — align with CASMEA repo schema)
-- [ ] Use `simple_settings_casmea_info_entry_icon_transparent.svg` for navigation/entry point
-- [ ] Define data model for personal/medical fields (name, conditions, medications, emergency contacts, etc. — **must match CASMEA consumer expectations**)
-- [ ] Implement secure local storage (encrypted at rest; scoped credentials per suite rules)
-- [ ] Expose read API for CASMEA (content provider, shared module, or documented contract — **coordinate with repo 02**)
-- [ ] Add validation, save/cancel flows, and clear user feedback
-- [ ] Document the data contract so CASMEA integration is unambiguous
-
-**Dependency:** `cowlsly_console_medical_emergency_assistant_casmea_repo_02` is a Phase 1 consumer; field names and access patterns must be agreed before shipping.
-
----
+- Single source of truth for personal/medical emergency data.
+- `CasmeaPanel.kt` form + `CasmeaContentProvider` (`com.cowlsly.simplesettings.casmea`).
+- PIN-gated edits; CASMEA app reads via content provider (no entry screen in CASMEA).
 
 ### C) Developer options shortcut
 
-**Requirement:** A fast-access button to developer tools, **visible only after developer access has been explicitly granted** elsewhere in the suite.
-
-**Implementation tasks:**
-
-- [ ] Implement developer-access gate (read granted/denied state from suite auth or local flag — **align with Authenticator repo 04 when available**)
-- [ ] Show shortcut button only when access is granted; hide completely otherwise
-- [ ] Use `simple_settings_developer_shortcut_icon_transparent.svg`
-- [ ] Deep-link or launch target developer tools screen (define destination — Vault repo, debug activity, or suite dev menu)
-- [ ] Ensure shortcut cannot be enabled by tampering with local UI alone (trust the upstream grant mechanism)
-
-**Note:** `cowlsly_console_authenticator_repo_04` is listed as a later consumer; interim grant mechanism may be needed for Phase 1.
+- Gated section visible only when developer access is granted.
+- PIN re-entry on each visit before opening Developer Options intents.
+- Shizuku panel for privileged settings when binder is granted.
 
 ---
 
-## Platform & project scaffolding (not started)
+## Application structure
 
-Before feature work, the repo needs a real application skeleton. Based on Cowlsly suite conventions (Android, `CogVideoBackground` in Vault repo):
-
-- [ ] **Confirm target platform** with suite owners (Android is implied by branding docs; verify before coding)
-- [ ] Initialize project structure (Gradle, package naming, module layout)
-- [ ] Import Phase 1 assets from `assets/images/` into app resources
-- [ ] Implement shared Cowlsly UI shell:
-  - Forever-turning cogs background (`cogs_background.mp4` loop via `CogVideoBackground`, or animated SVG fallback)
-  - Dark scrim (40–60% opacity) over background
-  - Neon glass panels, gold buttons, cyan accents per `Cowlsly/BRANDING.md` palette
-- [ ] Set launcher/module icon to `simple_settings_app_icon_transparent.svg`
-- [ ] Define how other apps **embed or launch** Simple Settings (standalone APK, library module, intent URI, or suite plugin — **architecture decision required**)
-- [ ] Add basic navigation between the three Phase 1 areas
-- [ ] CI/build pipeline and minimal smoke tests
-
----
-
-## Integration & downstream consumers
-
-| Consumer repo | Relationship | Action needed |
-|---------------|--------------|---------------|
-| `cowlsly_console_medical_emergency_assistant_casmea_repo_02` | Reads CASMEA data entered here | Agree schema + read contract; integration test |
-| `cowlsly_console_authenticator_repo_04` | Later; may govern developer-access grant | Define grant API when repo 04 exists; interim stub if needed |
-| Other Cowlsly Console apps | Future settings consumers | Keep module generic; add settings only when other apps need them |
+```
+app/
+├── build.gradle.kts
+├── proguard-rules.pro
+└── src/main/
+    ├── AndroidManifest.xml
+    ├── java/com/cowlsly/simplesettings/
+    │   ├── MainActivity.kt
+    │   ├── SimpleSettingsApplication.kt
+    │   ├── account/          # Cowlsly.com AccountManager + SyncAdapter
+    │   ├── audio/            # Page-turn UI sounds
+    │   ├── data/             # Catalog, CASMEA + suite providers, secure prefs
+    │   ├── shizuku/          # Privileged settings helper
+    │   ├── sync/             # Suite sync engine, website client, permissions
+    │   └── ui/
+    │       ├── components/   # Glass panels, cogs background, page turner
+    │       ├── panels/       # Volume, CASMEA, Shizuku, Credits, …
+    │       └── theme/        # Cowlsly palette + panel tint
+    └── res/                  # Launcher, strings, Cowlsly logo drawable
+```
 
 ---
 
-## Explicitly out of scope (Phase 1)
+## Beyond Phase 1 (already scaffolded)
 
-Do **not** build these in the first release:
+The app ships more than the three Phase 1 pillars — by design, per the master vision:
 
-- Any settings beyond volume, CASMEA entry, and developer shortcut
-- Data entry inside the CASMEA app itself
-- 100% volume level
-- Full Cowlsly Production layered logo (small embed kit only; full sigil lives in Vault repo)
-
-Record new ideas in the roadmap; do not expand scope mid-build (`ROADMAP.ORIGINAL.md` rule).
-
----
-
-## Suggested build order
-
-1. **Scaffold** — project init, branding shell, navigation skeleton  
-2. **A — Volume** — self-contained, no cross-repo contract; good first quick win  
-3. **B — CASMEA entry** — coordinate with repo 02 on schema and read path  
-4. **C — Developer shortcut** — depends on grant mechanism  
-5. **Integration** — end-to-end test with CASMEA consumer  
-6. **Docs** — update `ROADMAP.md` status from Planning → Building → Phase 1 complete  
+- Paged glass-panel UI over animated cogs background
+- Search bar with usage/search ranking (`UsageTracker`, `SettingsSorter`)
+- 50+ system setting intents (network, display, security, privacy, apps, …)
+- Suite sync: local JSON + ContentProvider + cowlsly.com API pull/push
+- Cowlsly Console Settings logo button → `https://cowlsly.com/console/settings`
+- Credits page (Shizuku, Hidden Settings, Activity Launcher)
 
 ---
 
-## Open decisions (blockers or near-blockers)
+## Build instructions
 
-| # | Question | Who / where to decide |
-|---|----------|----------------------|
-| 1 | Android app vs. shared library module vs. both? | Suite architecture |
-| 2 | CASMEA field schema and read API shape | Coordinate with `casmea_repo_02` |
-| 3 | How is developer access granted before Authenticator repo 04 exists? | Suite auth / interim flag |
-| 4 | Volume: system-wide vs. app-suite-only? Headphone warning trigger? | Platform + UX |
-| 5 | Where do developer tools deep-link to? | Vault or suite dev menu |
-| 6 | Copy `cogs_background.mp4` from Vault for runtime, or SVG-only for Phase 1? | Vault repo |
+Requires **Java 21** (Java 25 is not yet supported by the Kotlin Gradle plugin):
+
+```bash
+JAVA_HOME=/usr/local/sdkman/candidates/java/21.0.10-ms ./gradlew assembleDebug
+```
+
+Output: `app/build/outputs/apk/debug/app-debug.apk` (gitignored).
 
 ---
 
-## Success criteria for Phase 1
+## Integration consumers
 
-Phase 1 is complete when:
+| Consumer repo | Contract |
+|---------------|----------|
+| `cowlsly_console_medical_emergency_assistant_casmea_repo_02` | Read `content://com.cowlsly.simplesettings.casmea/` |
+| `cowlsly_console_authenticator_repo_04` | Developer grant (interim: local flag until repo 04 ships) |
+| Suite apps | Read `content://com.cowlsly.simplesettings.sync/` |
 
-1. A user can set volume (mute + steps through 90%) with hearing warning where required  
-2. A user can enter and update personal/medical info that CASMEA can read without its own entry screen  
-3. Developer shortcut appears only when access is granted and opens the agreed dev destination  
-4. UI matches Cowlsly cyberpunk branding (cogs background, palette, glass panels)  
-5. CASMEA repo 02 can consume the data contract in a tested integration  
-6. `ROADMAP.md` is updated to reflect shipped status  
+---
+
+## Later phases
+
+See `ROADMAP.md` for Phases 2–6 (full security hub, live developer gate, website JSON export, embeddable SDK).
 
 ---
 
 ## Related documents
 
-- `ROADMAP.md` — active scope and asset log  
-- `dev/dat/doc/ROADMAP.ORIGINAL.md` — rebuild context and AI assistant rules  
-- `assets/ASSET_MANIFEST.md` — asset-to-feature mapping  
-- `Cowlsly/BRANDING.md` — UI palette and background rules  
-- `assets/README.md` — asset naming and folder layout
+- `ROADMAP.md` — active scope and build log
+- `dev/dat/doc/SIMPLE_SETTINGS_VISION.md` — full master settings design
+- `dev/dat/doc/ROADMAP.ORIGINAL.md` — founding context
+- `assets/ASSET_MANIFEST.md` — asset-to-feature mapping
+- `Cowlsly/BRANDING.md` — UI palette and background rules
+- `Cowlsly/SUMMARY.md` — table of contents for this repo

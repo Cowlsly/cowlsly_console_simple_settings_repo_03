@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Simple Settings</string>
+    <string name="search_hint">Search any setting…</string>
+    <string name="previous_page">Previous</string>
+    <string name="next_page">Next</string>
+    <string name="page_indicator">Page %1$d of %2$d</string>
+    <string name="hearing_warning">Headphone volume above safe levels can cause permanent hearing damage.</string>
+    <string name="developer_pin_prompt">Enter PIN to open developer tools</string>
+    <string name="developer_access_required">Developer access must be granted in About first</string>
+    <string name="credits_title">Credits &amp; acknowledgements</string>
+    <string name="shizuku_not_available">Install Shizuku and grant permission for privileged settings</string>
+    <string name="cowlsly_console_title">Cowlsly Console</string>
+    <string name="cowlsly_console_welcome">You\'re welcome to come — just make an account. Polishing the website and app together keeps your console look-and-feel in sync.</string>
+    <string name="cowlsly_console_button">Cowlsly Console Settings</string>
+    <string name="cowlsly_console_subtitle">Suite home on the web</string>
+    <string name="cowlsly_console_logo">Cowlsly logo</string>
+    <string name="permission_promoter_heading">Permission — you stay in control</string>
+    <string name="permission_promoter_allow">Allow &amp; continue</string>
+    <string name="permission_promoter_later">Not now — thanks</string>
+    <string name="sync_all_refreshing">Syncing all settings from their sources…</string>
+    <string name="open_system_control">Open in Android Settings</string>
+    <string name="suite_sync_coherent">Synced with website &amp; suite apps</string>
+    <string name="cowlsly_account_label">Cowlsly</string>
+    <string name="ordering_app_usage">App panels: most-used first</string>
+    <string name="ordering_web_alpha">Website: always A→Z</string>
+</resources>

@@ -2,13 +2,13 @@
 
 **Repo:** `cowlsly_console_simple_settings_repo_03`  
 **Last updated:** 2026-07-08  
-**Status:** North-star design — Phase 1 builds the first slice; this doc holds the full picture.
+**Status:** North-star design — Phase 1 shipped in `app/`; this doc holds the full picture.
 
 ## Why it is called Simple Settings
 
 **Simple** does not mean *limited*. It means the settings you need most are **closest to you** — at the top, in one place, in priority order — so you never dig through five Android menus to change volume, privacy, or security.
 
-One endless scroll. Most-used controls first. Everything else still there, just below. No hunting.
+One endless panel deck. Most-used controls on **page 1**; second-most-used on page 2; and so on. Forward and previous buttons (with pressed states and sounds) page through until you reach the end — including credits. No hunting.
 
 ## One app, every layer
 
@@ -30,14 +30,24 @@ Other Cowlsly apps **include or deep-link** into Simple Settings instead of rebu
 - Cyberpunk neon glass panels over the **forever-turning cog machine** background.
 - Cowlsly small logo in headers. See `Cowlsly/BRANDING.md`.
 - Calm readability: security and privacy sections stay clear, not decorative clutter.
-- Page-turner navigation optional on large screens; phone uses one vertical scroll.
+- **Page-turner navigation** on all form factors: glass panels over the forever-turning cogs; Previous / Next with pressed states and UI sounds.
+- **Search bar** at the top — any user, advanced, developer, or tool setting. Search frequency feeds the same usage rank as opens.
+- **Dynamic order**: the more a panel is opened or searched, the closer it moves to page 1.
 
-## The settings scroll — priority order
+## The settings pages — priority order
 
-Top = closest to you. Bottom = deeper system layers. **Never reorder without updating this doc and `SettingsPriority`.**
+Page 1 = closest to you. Later pages = deeper system layers. **Base priority never changes without updating this doc and `SettingsCatalog`; usage/search scores reorder within that.**
+
+| Mechanism | Rule |
+|-----------|------|
+| `basePriority` | P1 closest … P13 credits last |
+| `open` events | +3 rank boost per open |
+| `search` hits | +2 rank boost per search |
+| Page size | 6 panels per page (phone) |
 
 | P | Zone | What the user gets |
 |---|------|-------------------|
+| **0 (pinned)** | **Cowlsly Console** | Logo fave button on page 1 only — always opens Cowlsly Console Settings on cowlsly.com (make an account welcome) |
 | **1** | **Closest to you** | Volume (mute + 0/25/50/75/90% steps, hearing warning), panel colour tint, quick brightness feel |
 | **2** | **Sound & display** | Media volume link, notification tone link, display/text size shortcuts |
 | **3** | **Security** | PIN, password, fingerprint toggles; lock-on-background; screen lock timeout link |
@@ -50,6 +60,7 @@ Top = closest to you. Bottom = deeper system layers. **Never reorder without upd
 | **10** | **Accounts & backup** | Google/system accounts, backup, sync status links |
 | **11** | **Developer** | Hidden until access granted; PIN/password re-entry; then Developer Options + USB debugging links |
 | **12** | **About & sync** | App version, Cowlsly identity, website settings JSON export/import |
+| **13** | **Credits** | Fair credit to Shizuku, Hidden Settings, Activity Launcher, and other external apps whose patterns we surface |
 
 ```mermaid
 flowchart TD
@@ -60,8 +71,9 @@ flowchart TD
     E --> F{Developer access granted?}
     F -- No --> G[P12 About & sync]
     F -- Yes --> H[P11 PIN/password gate]
-    H --> I[Developer Options + system dev settings]
+    H --> I[Developer Options + Shizuku + system dev settings]
     I --> G
+    G --> J[P13 Credits]
 ```
 
 ## Security & privacy — in detail
@@ -142,7 +154,7 @@ Nothing is removed to keep the app "simple" — it is **organised**, not strippe
 |----------|-----------------------------------|
 | **Cowlsly Vault** | P1 console UI, P3 security toggles, P11 developer gate pattern |
 | **CASMEA** | P5 medical info fields (read-only in CASMEA app; edit only here) |
-| **Cowlsly.com / home** | Console UI prefs + profile/security flags via `cowlsly_website_settings_sync.json` |
+| **Cowlsly.com / home** | Console UI prefs + profile/security flags via `cowlsly_website_settings_sync.json` — **every change pushes live** to website + `content://com.cowlsly.simplesettings.sync/document` |
 | **Authenticator** (future) | Identity + security layer from P3–P5 |
 
 Vault keeps **ALI-Key secrets** in the keyring. Simple Settings never stores API keys.
@@ -151,7 +163,7 @@ Vault keeps **ALI-Key secrets** in the keyring. Simple Settings never stores API
 
 | Phase | Delivers |
 |-------|----------|
-| **1 (now)** | Volume + hearing warning, CASMEA entry screen, developer shortcut stub |
+| **1 (now)** | Android app scaffold: paged panels, search, usage ranking, volume, CASMEA entry, developer gate, Shizuku stub, credits |
 | **2** | Full P1–P2 scroll, system intent launcher for P6–P8 |
 | **3** | Security & privacy hub (P3–P4) wired to suite lock model |
 | **4** | Developer gate + P11 live links |
@@ -183,18 +195,20 @@ Vault keeps **ALI-Key secrets** in the keyring. Simple Settings never stores API
 │  ├─────────────────────────────┤    │
 │  │ P11 DEVELOPER (gated)  →    │    │
 │  └─────────────────────────────┘    │
-│         ↓ endless scroll ↓          │
+│   [◀ Previous]  Page 2/9  [Next ▶]  │
 └─────────────────────────────────────┘
 ```
 
 ## Rules for builders and Marla
 
 1. **Closest first** — if a setting is used daily, it belongs in P1–P2.
-2. **Do not duplicate Android** — lead the user to system settings for device-private data.
-3. **Protect mutations** — PIN/password/biometric required before security, personal, or developer changes.
-4. **CASMEA edits only here** — emergency app is view-only on lock screen.
-5. **Developer is gated twice** — grant access once, re-enter PIN each visit.
-6. **Update docs from the app** — when implementation changes, update this file and `ROADMAP.md`.
+2. **Sync with the original source** — read live values from Android (`Settings.System/Secure/Global`, `AudioManager`); write back where the user grants control. Intent-only panels mirror read state and open the system app for edits.
+3. **Permissions with instructions** — every permission is promoted to the user on page 1 with plain steps and thanks; nothing silent.
+4. **Do not duplicate Android storage** — when write access is impossible, lead the user to the system screen (Shizuku for privileged paths).
+5. **Protect mutations** — PIN/password/biometric required before security, personal, or developer changes.
+6. **CASMEA edits only here** — emergency app is view-only on lock screen.
+7. **Developer is gated twice** — grant access once, re-enter PIN each visit.
+8. **Update docs from the app** — when implementation changes, update this file and `ROADMAP.md`.
 
 ## Related documents
 

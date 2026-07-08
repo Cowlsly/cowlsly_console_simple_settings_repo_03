@@ -18,3 +18,14 @@
 * [ASSET\_MANIFEST](../assets/ASSET_MANIFEST.md)
 
 ## UI badges (assets/images/ui/volume\_steps/)
+
+## Application (`app/`)
+
+* `app/build.gradle.kts` — module config (Compose, Shizuku, DataStore)
+* `app/src/main/AndroidManifest.xml` — launcher, CASMEA + suite sync providers
+* `app/src/main/java/com/cowlsly/simplesettings/`
+  * `data/` — `SettingsCatalog`, `CasmeaContentProvider`, `SuiteSyncContentProvider`
+  * `sync/` — suite sync engine, website client, permission catalog
+  * `ui/` — Compose root, panels, glass components, Cowlsly theme
+  * `account/` — Cowlsly.com AccountManager + SyncAdapter stub
+* `REPORT.md` — Phase 1 completion summary and build instructions

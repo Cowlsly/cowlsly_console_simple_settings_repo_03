@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="cowlsly_bg_deep">#020610</color>
+    <color name="cowlsly_bg_mid">#071321</color>
+    <color name="cowlsly_bg_top">#17304d</color>
+    <color name="cowlsly_cyan">#20f0ff</color>
+    <color name="cowlsly_gold_light">#fff2a8</color>
+    <color name="cowlsly_gold_mid">#d7a93d</color>
+    <color name="cowlsly_warning">#ff5c78</color>
+</resources>

@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "asset_version": "2026.07.12.1",
+  "asset_version": "2026.07.12.2",
   "canonical_repository": "Cowlsly/cowlsly-ui-assets-and-data-files",
   "canonical_branch": "root",
   "canonical_commit": "93ea3cb1679b35ad8d929e81220ed80c9c4ff0c5",
@@ -8,16 +8,24 @@
   "migration_state": "governance_converted_binary_import_pending",
   "assets": [
     {
-      "source": "assets/ui_transitions/cowlsly_vault_transition/production/visuals/png",
-      "destination": "app/src/main/res/drawable-nodpi/cowlsly_vault_transition",
-      "directory": true,
-      "include": ["cowlsly_vault_door_left.png", "cowlsly_vault_door_right.png", "cowlsly_vault_frame.png"]
+      "source": "assets/ui_transitions/cowlsly_vault_transition/production/visuals/png/cowlsly_vault_door_left.png",
+      "destination": "app/src/main/res/drawable-nodpi/cowlsly_vault_door_left.png",
+      "sha256": "79a605297ed1cfbf6262aebad7186603de8e3adcff62ac3bed6d6230f8487929"
     },
     {
-      "source": "assets/ui_transitions/cowlsly_vault_transition/production/audio/ogg",
-      "destination": "app/src/main/res/raw/cowlsly_vault_transition",
-      "directory": true,
-      "include": ["cowlsly_transition_full_standard.ogg"]
+      "source": "assets/ui_transitions/cowlsly_vault_transition/production/visuals/png/cowlsly_vault_door_right.png",
+      "destination": "app/src/main/res/drawable-nodpi/cowlsly_vault_door_right.png",
+      "sha256": "5a720af3230c6f367ef227db2c60ba473413aa449d98ccad67999b746dcc76d2"
+    },
+    {
+      "source": "assets/ui_transitions/cowlsly_vault_transition/production/visuals/png/cowlsly_vault_frame.png",
+      "destination": "app/src/main/res/drawable-nodpi/cowlsly_vault_frame.png",
+      "sha256": "c6e6ba5ccdbaa3da466d932359049cc053a84ddc32f4916b3da4759b9e67b4b6"
+    },
+    {
+      "source": "assets/ui_transitions/cowlsly_vault_transition/production/audio/ogg/cowlsly_transition_full_standard.ogg",
+      "destination": "app/src/main/res/raw/cowlsly_transition_full_standard.ogg",
+      "sha256": "93bff6330f0c86efdf5ee019df1b7f91cf9ca1a1dbfe468db299c30cf33a343d"
     }
   ],
   "required_canonical_groups": [
@@ -42,6 +50,7 @@
   "notes": [
     "The former every-repository-carries-branding policy is obsolete.",
     "Existing local assets remain protected until canonical import and Java 21 Gradle validation pass.",
-    "Generated Android resources must not be edited manually."
+    "Generated Android resources must not be edited manually.",
+    "Android resources are copied directly into valid res type directories; no nested folders are used."
   ]
 }

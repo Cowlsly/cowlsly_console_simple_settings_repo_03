@@ -1,115 +1,75 @@
-# PATH.of.TRUTH.md — Cowlsly Simple Settings Repo
+# PATH.of.TRUTH — Cowlsly Simple Settings
 
-Repo: `Cowlsly/cowlsly_console_simple_settings_repo_03`
-Default branch: `main`
-Created: 2026-07-09
-Purpose: per-repo asset and documentation checklist for Simple Settings.
+## Authority order
 
-## Product scope
+1. `PATH.of.TRUTH.md`
+2. `README.md`
+3. `ROADMAP.md`
+4. `TODO.md`
+5. `UI_ASSET_SOURCE.md`
+6. `ui_asset_dependencies.json`
+7. `dev/dat/doc/SIMPLE_SETTINGS_VISION.md`
 
-Simple Settings is the shared master settings module for Cowlsly apps. It owns the closest controls first: volume, mute, panel tint, hearing warning, personal/CASMEA entry, regular Android settings shortcuts, gated developer options, and future suite sync.
+Historical local asset manifests remain migration records and never override the canonical UI repository.
 
-Do not store ALI-Key/API secrets in this repo. That belongs to the Vault/Marla Keyring repo.
+## Repository ownership
 
-## Required files to read before work
+Simple Settings owns the Android settings catalogue, search/ranking behavior, safe system-intent navigation, suite settings contracts, volume/hearing controls, CASMEA entry integration, and explicitly gated developer shortcuts.
 
-- `README.md`
-- `ROADMAP.md`
-- `assets/README.md`
-- `assets/ASSET_MANIFEST.md`
-- `dev/dat/doc/SIMPLE_SETTINGS_VISION.md`
-- `dev/dat/doc/ROADMAP.ORIGINAL.md`
-- `Cowlsly/BRANDING.md`
+It does not own API-key storage or reusable UI masters.
 
-## Agent instruction block
+## Rules for agents
 
-When prompted to work in this repo:
+1. Read this file and the authority documents before work.
+2. Do not store ALI-Key/API secrets, recovery data, or private vault material.
+3. Do not create shared branding, icons, panels, backgrounds, controls, or UI audio as local masters.
+4. Add reusable assets to `Cowlsly/cowlsly-ui-assets-and-data-files`, update its manifests/checksums, then sync generated Android copies from `ui_asset_dependencies.json`.
+5. Existing files under `assets/branding/`, `assets/images/`, and Android `res/` remain protected migration candidates until canonical checksums and a Java 21 build pass.
+6. Android resources must be copied directly into valid resource-type directories; nested arbitrary folders under `res/drawable*` or `res/raw` are forbidden.
+7. Settings remain user-consent-led. No hidden admin or developer access.
+8. Record exact changed paths, tests, security effects, canonical source paths, and hashes.
 
-1. Read this file.
-2. Read `assets/ASSET_MANIFEST.md`.
-3. Search this repo for the next unchecked or missing Simple Settings asset.
-4. Compare against the website repo master list in `Cowlsly/cowlsly-console-web-repo-01/FULL.PATH.of.TRUTH.md` if available.
-5. If the chosen asset is web-facing, place/copy the final web version into the website repo under the matching `assets/` path.
-6. If the chosen asset is native-app-only, keep it in this repo and log it here.
-7. Update this work log and any asset manifest touched.
-8. Report exact changed paths and factual security notes only.
+## Existing migration candidates
 
-## Existing DONE assets from manifest
+The former local manifest records:
 
-### Icons in `assets/images/icons/`
+- eight transparent settings/zone icons;
+- five volume-step badges;
+- compact Cowlsly branding;
+- the animated cog-machine background.
 
-- `simple_settings_app_icon_transparent.svg` — DONE
-- `simple_settings_volume_steps_icon_transparent.svg` — DONE
-- `simple_settings_volume_mute_icon_transparent.svg` — DONE
-- `simple_settings_hearing_warning_icon_transparent.svg` — DONE
-- `simple_settings_casmea_info_entry_icon_transparent.svg` — DONE
-- `simple_settings_developer_shortcut_icon_transparent.svg` — DONE
-- `simple_settings_security_privacy_icon_transparent.svg` — DONE
-- `simple_settings_device_settings_icon_transparent.svg` — DONE
+These are not deleted or regenerated casually. Import authoritative originals into the canonical UI repository, preserve SHA-256 and provenance, update the consumer pin, run the sync, then build.
 
-### UI badges in `assets/images/ui/volume_steps/`
-
-- `simple_settings_volume_step_0_percent_transparent.svg` — DONE
-- `simple_settings_volume_step_25_percent_transparent.svg` — DONE
-- `simple_settings_volume_step_50_percent_transparent.svg` — DONE
-- `simple_settings_volume_step_75_percent_transparent.svg` — DONE
-- `simple_settings_volume_step_90_percent_transparent.svg` — DONE
-
-### Shared branding in `assets/branding/`
-
-- `cowlsly_logo_small.png` — DONE
-- `cowlsly_logo_small_transparent.svg` — DONE
-- `cowlsly_cogs_background_animated.svg` — DONE
-
-## Suggested next asset/documentation queue
-
-1. Confirm any missing settings-zone button state sets for website integration.
-2. Create web-facing Simple Settings button states only if absent from website master list:
-   - `assets/images/buttons/cowlsly_button_simple_settings_base_transparent.png`
-   - `assets/images/buttons/cowlsly_button_simple_settings_pressed_transparent.png`
-3. Create panel tint preview assets only if needed by `ROADMAP.md` or website master list.
-4. Create accessibility companion icons only if not already covered by website `L001-L007`.
-5. Keep Simple Settings native icons readable, simple, and transparent.
-
-## Palette
-
-Use suite palette:
-
-- Midnight machine base: `#020610`, `#071321`, `#17304d`
-- Gold accent: `#fff2a8`, `#d7a93d`, `#815b18`
-- Cyan accent: `#20f0ff`
-- Warning: `#ff5c78` with gold/cream stroke
-
-## Rules
-
-- Use lower_snake_case filenames.
-- Transparent UI pieces should be SVG or true-alpha PNG.
-- No checkerboard backgrounds.
-- Do not duplicate DONE assets.
-- Settings must remain user-consent-led and cannot quietly enable hidden developer/admin access.
-
-## Required work log format
+## Canonical structure
 
 ```text
-YYYY-MM-DD | agent/tool | action
-- searched: files/folders searched
-- selected asset: id + filename, or SKIPPED with reason
-- generated/copied/edited/deleted: exact paths
-- placed final file: exact path
-- quality checks: transparency/build/docs checks completed
-- ledger updates: files updated
-- security/evidence notes: factual observations only; no accusations, no secrets, no private keys
+app/
+docs/
+dev/dat/doc/
+tests/
+tools/
+assets/                 # temporary migration records or generated copies only
 ```
+
+## Required validation
+
+- Java 21 `./gradlew assembleDebug`
+- unit/instrumentation tests where available
+- resource and Compose/XML reference checks
+- suite settings schema migration tests
+- system-intent fallback checks
+- accessibility, reduced-motion, and hearing-warning checks
+
+## Branch policy
+
+The canonical branch is `root`. GitHub may still report `main` as default until repository administration is changed. Keep both refs identical and create no divergent work.
 
 ## Work log
 
-2026-07-09 | Marla / ChatGPT connector | created repo-level checklist
-- searched: repo metadata, `ROADMAP.md`, `assets/ASSET_MANIFEST.md`, website master asset ledger references
-- selected asset: none; documentation control file only
-- generated/copied/edited/deleted: created `PATH.of.TRUTH.md`
-- placed final file: `PATH.of.TRUTH.md`
-- quality checks: no binary assets created; no DONE asset status changed
-- ledger updates: none
-- security/evidence notes: confirmed ALI-Key/API secret storage remains out of scope for this repo
+2026-07-09 | initial repo checklist
+- Recorded original local asset inventory and guarded API-key storage out of scope.
 
-END
+2026-07-12 | canonical asset and structure correction
+- Added current README/ROADMAP/TODO authority chain.
+- Replaced website-copy/local-master instructions with canonical UI dependency rules.
+- Created `root` from the corrected `main` history.

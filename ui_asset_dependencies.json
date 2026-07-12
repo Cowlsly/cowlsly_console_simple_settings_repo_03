@@ -1,9 +1,9 @@
 {
   "schema_version": "1.1.0",
-  "asset_version": "2026.07.12.4",
+  "asset_version": "2026.07.12.5",
   "canonical_repository": "Cowlsly/cowlsly-ui-assets-and-data-files",
   "canonical_branch": "main",
-  "canonical_commit": "57092e589f0a71ecfd11b86c66114122babdbd4a",
+  "canonical_commit": "6d0366ccffacdbdd3258488451788c7c378a885e",
   "last_sync_date": null,
   "migration_state": "governance_audit_and_java21_ci_integrated_binary_import_pending",
   "assets": [

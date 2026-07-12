@@ -24,21 +24,21 @@ It does not own API-key storage or reusable UI masters.
 2. Do not store ALI-Key/API secrets, recovery data, or private vault material.
 3. Do not create shared branding, icons, panels, backgrounds, controls, or UI audio as local masters.
 4. Add reusable assets to `Cowlsly/cowlsly-ui-assets-and-data-files`, update its manifests/checksums, then sync generated Android copies from `ui_asset_dependencies.json`.
-5. Existing files under `assets/branding/`, `assets/images/`, and Android `res/` remain protected migration candidates until canonical checksums and a Java 21 build pass.
+5. Existing files under `assets/branding/`, `assets/images/`, and Android `res/` remain protected generated copies or migration candidates until canonical checksums and a Java 21 build pass.
 6. Android resources must be copied directly into valid resource-type directories; nested arbitrary folders under `res/drawable*` or `res/raw` are forbidden.
 7. Settings remain user-consent-led. No hidden admin or developer access.
 8. Record exact changed paths, tests, security effects, canonical source paths, and hashes.
 
-## Existing migration candidates
+## Canonical asset state
 
-The former local manifest records:
+The complete reusable set is already canonical and byte-verified:
 
 - eight transparent settings/zone icons;
-- five volume-step badges;
-- compact Cowlsly branding;
-- the animated cog-machine background.
+- five volume-step controls;
+- compact Cowlsly PNG and SVG branding;
+- the animated cog-machine SVG background.
 
-These are not deleted or regenerated casually. Import authoritative originals into the canonical UI repository, preserve SHA-256 and provenance, update the consumer pin, run the sync, then build.
+Existing local copies remain until deterministic sync and Java 21 validation confirm safe cleanup.
 
 ## Canonical structure
 
@@ -48,7 +48,7 @@ docs/
 dev/dat/doc/
 tests/
 tools/
-assets/                 # temporary migration records or generated copies only
+assets/                 # historical records or generated copies only
 ```
 
 ## Required validation
@@ -62,7 +62,7 @@ assets/                 # temporary migration records or generated copies only
 
 ## Branch policy
 
-The canonical branch is `root`. GitHub may still report `main` as default until repository administration is changed. Keep both refs identical and create no divergent work.
+The canonical and only branch is `root`. Do not create a separate line of work without an explicit reviewed PR plan.
 
 ## Work log
 
@@ -72,4 +72,10 @@ The canonical branch is `root`. GitHub may still report `main` as default until 
 2026-07-12 | canonical asset and structure correction
 - Added current README/ROADMAP/TODO authority chain.
 - Replaced website-copy/local-master instructions with canonical UI dependency rules.
-- Created `root` from the corrected `main` history.
+- Imported and byte-verified all 16 reusable assets in the canonical UI repository.
+
+2026-07-12 | final branch closeout
+- Integrated all reviewed histories into `root`.
+- Deleted every non-root branch after ancestry verification.
+- Confirmed `root` as the GitHub default branch.
+- Retargeted dependency metadata and documentation from `main` to `root`.

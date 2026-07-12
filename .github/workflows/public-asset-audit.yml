@@ -1,0 +1,51 @@
+name: Public Asset and Privacy Audit
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "assets/**"
+      - "app/src/main/res/**"
+      - "docs/assets/**"
+      - "scripts/audit_public_repo.py"
+      - ".github/workflows/public-asset-audit.yml"
+  push:
+    branches: [main]
+    paths:
+      - "assets/**"
+      - "app/src/main/res/**"
+      - "docs/assets/**"
+      - "scripts/audit_public_repo.py"
+      - ".github/workflows/public-asset-audit.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: public-asset-audit-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run value-redacted public repository audit
+        run: python scripts/audit_public_repo.py
+
+      - name: Upload audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: simple-settings-public-repo-audit
+          path: build/reports/public_repo_audit.json
+          retention-days: 14
+          if-no-files-found: error

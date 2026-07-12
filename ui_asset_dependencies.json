@@ -1,8 +1,8 @@
 {
   "schema_version": "1.2.0",
-  "asset_version": "2026.07.12.7",
+  "asset_version": "2026.07.12.8",
   "canonical_repository": "Cowlsly/cowlsly-ui-assets-and-data-files",
-  "canonical_branch": "main",
+  "canonical_branch": "root",
   "canonical_commit": "acf7ffaab736283daccd286d01abf60a8f2a80a2",
   "last_sync_date": null,
   "migration_state": "exact_reusable_masters_canonical_consumer_sync_and_java21_validation_pending",
@@ -78,6 +78,7 @@
     "All 16 reusable Simple Settings assets were imported byte-for-byte into the canonical release with matching SHA-256 values.",
     "Existing local paths are generated consumer copies and remain until deterministic sync and Java 21 validation pass.",
     "Generated Android resources and generated asset copies must not be edited manually.",
-    "Android resources are copied directly into valid res type directories; no nested folders are used."
+    "Android resources are copied directly into valid res type directories; no nested folders are used.",
+    "Repository branch consolidation completed on 2026-07-12; root is the only branch."
   ]
 }

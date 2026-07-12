@@ -2,7 +2,7 @@ name: Public Asset and Privacy Audit
 
 on:
   pull_request:
-    branches: [main]
+    branches: [root]
     paths:
       - "assets/**"
       - "app/src/main/res/**"
@@ -10,7 +10,7 @@ on:
       - "scripts/audit_public_repo.py"
       - ".github/workflows/public-asset-audit.yml"
   push:
-    branches: [main]
+    branches: [root]
     paths:
       - "assets/**"
       - "app/src/main/res/**"
@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: Checkout
+      - name: Checkout root
         uses: actions/checkout@v4
 
       - name: Set up Python

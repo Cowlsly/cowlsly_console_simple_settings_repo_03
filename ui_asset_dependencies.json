@@ -1,11 +1,11 @@
 {
   "schema_version": "1.2.0",
-  "asset_version": "2026.07.12.6",
+  "asset_version": "2026.07.12.7",
   "canonical_repository": "Cowlsly/cowlsly-ui-assets-and-data-files",
   "canonical_branch": "main",
-  "canonical_commit": "7bf0fd91b244c325f2d74119817c7c5d15fb709a",
+  "canonical_commit": "acf7ffaab736283daccd286d01abf60a8f2a80a2",
   "last_sync_date": null,
-  "migration_state": "svg_masters_canonical_and_reproducible_binary_exports_pending",
+  "migration_state": "exact_reusable_masters_canonical_consumer_sync_and_java21_validation_pending",
   "assets": [
     {
       "source": "assets/ui/icons/simple_settings",
@@ -20,12 +20,19 @@
       "include": ["*.svg"]
     },
     {
+      "source": "assets/branding/cowlsly/compact/cowlsly_logo_small.png",
+      "destination": "assets/branding/cowlsly_logo_small.png",
+      "sha256": "47ad737f851010f6e475cf3e517ab70af5fdb6ce0ef11ceec40d333851b73ae3"
+    },
+    {
       "source": "assets/branding/cowlsly/compact/cowlsly_logo_small_transparent.svg",
-      "destination": "assets/branding/cowlsly_logo_small_transparent.svg"
+      "destination": "assets/branding/cowlsly_logo_small_transparent.svg",
+      "sha256": "e100069b0dc84cd6860c76acc0ffccedfbe45f46d540c478a237b5f423865a93"
     },
     {
       "source": "assets/ui/backgrounds/cowlsly_machine/cowlsly_cogs_background_animated.svg",
-      "destination": "assets/branding/cowlsly_cogs_background_animated.svg"
+      "destination": "assets/branding/cowlsly_cogs_background_animated.svg",
+      "sha256": "40acbe7b1010c9007349867e92a17c14998bacefedd425341fc938f8b6f3a13e"
     },
     {
       "source": "assets/ui_transitions/cowlsly_vault_transition/production/visuals/png/cowlsly_vault_door_left.png",
@@ -53,7 +60,7 @@
     "assets/ui/backgrounds/cowlsly_machine",
     "assets/ui/icons/simple_settings",
     "assets/ui/controls/simple_settings/volume_steps",
-    "assets/audio/ui"
+    "assets/ui_transitions/cowlsly_vault_transition"
   ],
   "generated_path_patterns": [
     "app/src/main/res/drawable-nodpi/**",
@@ -68,10 +75,9 @@
     "app/src/androidTest/resources/**"
   ],
   "notes": [
-    "The former every-repository-carries-branding policy is obsolete.",
-    "Simple Settings SVG masters are now canonical in the UI repository and local SVG paths are reproducible generated copies.",
-    "Binary PNG/WebP/runtime exports remain protected until canonical transfer and a Java 21 Gradle validation pass.",
-    "Generated Android resources and generated SVG copies must not be edited manually.",
+    "All 16 reusable Simple Settings assets were imported byte-for-byte into the canonical release with matching SHA-256 values.",
+    "Existing local paths are generated consumer copies and remain until deterministic sync and Java 21 validation pass.",
+    "Generated Android resources and generated asset copies must not be edited manually.",
     "Android resources are copied directly into valid res type directories; no nested folders are used."
   ]
 }

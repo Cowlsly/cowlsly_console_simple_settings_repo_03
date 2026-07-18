@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "repository": "Cowlsly/cowlsly-console-simple-settings-app",
+  "repository": "Cowlsly/cowlsly-simple-settings-console",
   "audit_date": "2026-07-11",
   "audited_head_sha": "f3edb0ae7d9d80a45fdbf7ef981be9e2bd0fc3c7",
   "file_count": 106,
@@ -35,5 +35,5 @@
     "sha256": "1e8f5cc8b7bc42ef14adb9ea17127790a5ad4a02e21919b1dc808007fa52a3a1",
     "committed": false
   },
-  "note": "Measured audit evidence is historical. Current main adds governance and audit tooling but preserves all binaries until canonical transfer and rebuild."
+  "note": "Measured audit evidence is historical. Current root adds governance and audit tooling but preserves all binaries until canonical transfer and rebuild."
 }

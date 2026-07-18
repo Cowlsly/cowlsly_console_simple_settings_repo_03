@@ -2,7 +2,7 @@
 
 <div align="center"><img src="Cowlsly/.gitbook/assets/cowlsly_logo_small.png" alt="Cowlsly Production" width="220"></div>
 
-Repository: `Cowlsly/cowlsly-console-simple-settings-app`  
+Repository: `Cowlsly/cowlsly-simple-settings-console`  
 Active and only branch: `root`
 
 Cowlsly Simple Settings is the shared Android settings module for the Cowlsly Console suite.
